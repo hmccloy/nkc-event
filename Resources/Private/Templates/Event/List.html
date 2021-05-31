@@ -1,0 +1,85 @@
+<html xmlns:n="http://typo3.org/ns/Nordkirche/NkcBase/ViewHelpers"
+      xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
+      xmlns:nkg="http://typo3.org/ns/Nordkirche/NkGoogleMap/ViewHelpers"
+      xmlns:v="http://typo3.org/ns/FluidTYPO3/Vhs"
+      data-namespace-typo3-fluid="true">
+
+    <f:layout name="Default" />
+
+    <f:section name="main">
+
+        <f:if condition="{settings.flexform.showFilter}">
+            <f:render partial="Event/SearchForm" arguments="{searchRequest : searchRequest, searchPid : searchPid, filter: filter, organizer: organizer, content: content}" />
+        </f:if>
+
+            <f:if condition="{settings.flexform.showMap}">
+                <f:if condition="{mapMarkers}">
+                    <f:then>
+                        <f:comment>
+                            Default view with loaded markers
+                        </f:comment>
+                        <nkg:widget.googleMap markers="{mapMarkers}" configuration="{cssClass: 'wide'}" />
+                    </f:then>
+                    <f:else if="{requestUri} || {streamUri}">
+                        <f:comment>
+                            Async loading of markers
+                        </f:comment>
+                        <nkg:widget.googleMap requestUri="{requestUri}" streamUri="{streamUri}" configuration="{cssClass: 'wide', pagination: 'tx_nkcevent_main[page]'}" />
+                    </f:else>
+                </f:if>
+            </f:if>
+
+        <div class="event-list">
+            <div class="container">
+
+                <f:if condition="{events}">
+                    <f:then>
+
+                        <f:if condition="{settings.flexform.showFilter}">
+                            <h3>Ihre Suche ergab {events.recordCount} Treffer</h3>
+                        </f:if>
+
+                        <f:if condition="{settings.flexform.paginate.mode} > 1">
+                            <f:then>
+                                <n:widget.paginate objects="{events}" as="paginatedEvents" configuration="{settings.flexform.paginate}">
+                                    <f:for each="{paginatedEvents}" as="event">
+                                        <f:render partial="Event/Teaser" arguments="{event: event}"/>
+                                    </f:for>
+                                </n:widget.paginate>
+                            </f:then>
+                            <f:else>
+                                <div class="ajax-list-wrapper">
+                                    <div class="ajax-list">
+                                        <f:for each="{events}" as="event">
+                                            <f:render partial="Event/Teaser" arguments="{event: event}"/>
+                                        </f:for>
+                                    </div>
+                                    <f:if condition="{settings.flexform.paginate.mode} == 1">
+                                        <f:if condition="{events.pageCount} >= {query->n:nextPage()}">
+                                            <div class="ajax-list__next-page" data-request-uri="{f:uri.action(action: 'list', arguments: {currentPage: '{query->n:nextPage()}', searchRequest: searchRequest.array}, additionalParams: {type: settings.ajaxListTypeNum, uid: content.uid})}">
+                                                <v:render.template file="EXT:nkc_base/Resources/Private/Partials/LoadMoreButton.html" />
+                                            </div>
+                                        </f:if>
+                                    </f:if>
+                                </div>
+                            </f:else>
+                        </f:if>
+                    </f:then>
+                    <f:else>
+                        <f:if condition="{settings.flexform.errorMessgage}">
+                            <f:then>
+                                {settings.flexform.errorMessage}
+                            </f:then>
+                            <f:else>
+                                Es wurden keine Veranstaltungen gefunden.
+                            </f:else>
+                        </f:if>
+                    </f:else>
+                </f:if>
+
+            </div>
+
+        </div>
+
+    </f:section>
+</html>

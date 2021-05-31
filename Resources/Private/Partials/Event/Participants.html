@@ -1,0 +1,38 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+
+    <f:if condition="{event.vocalSoloists->f:count()} || {event.instrumentalSoloists->f:count()} || {event.choirs->f:count()} || {event.ensembles->f:count()} || {event.orchestras->f:count()}">
+
+        <h2>Mitwirkende</h2>
+        <ul>
+        <f:for each="{event.vocalSoloists}" as="soloist">
+            <li>
+                {soloist.first_name} {soloist.last_name} ({soloist.vocal_range})
+            </li>
+        </f:for>
+
+        <f:for each="{event.instrumentalSoloists}" as="soloist">
+            <li>
+                {soloist.first_name} {soloist.last_name} ({soloist.instrument})
+            </li>
+        </f:for>
+
+        <f:for each="{event.choirs}" as="choir">
+            <li>
+                {choir.name}
+            </li>
+        </f:for>
+
+        <f:for each="{event.ensembles}" as="ensemble">
+            <li>
+                {ensemble.name}
+            </li>
+        </f:for>
+
+        <f:for each="{event.orchestras}" as="orchestra">
+            <li>
+                {orchestra.name}
+            </li>
+        </f:for>
+        </ul>
+    </f:if>
+</html>

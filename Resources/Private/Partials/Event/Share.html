@@ -1,0 +1,30 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:alias map="{
+  url: '{f:uri.action(action:show, absolute:1, arguments:{uid: event.id}) -> f:format.urlencode()}',
+  title: '{event.title -> f:format.urlencode()}'
+  }">
+
+    <h3>Veranstaltung teilen:</h3>
+
+    <ul>
+        <li>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={url}" target="_blank" data-popup="400x300">facebook</a>
+        </li>
+        <li>
+            <a href="fb-messenger://share/?link={url}">facebook messenger</a>
+        </li>
+        <li>
+            <a href="whatsapp://send?text={url}">whatsapp</a>
+        </li>
+        <li>
+            <a href="https://twitter.com/intent/tweet?text={title}%0A{url}" target="_blank" data-popup="400x300">twitter</a>
+        </li>
+        <li>
+            <a href="mailto:email@domain.tld?body={url}" target="_blank">e-mail</a>
+        </li>
+    </ul>
+</f:alias>
+
+</html>

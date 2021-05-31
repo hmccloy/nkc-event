@@ -1,0 +1,16 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<f:translate key="LLL:EXT:nkc_event/Resources/Private/Language/locallang.xlf:date.day.{event.startsAt -> f:format.date(format: 'w')}"/>, <f:format.date format="%e. %B %Y %H:%M">{event.startsAt}</f:format.date>
+	<f:if condition="{event.endsAt} != {event.startsAt}">
+		<f:if condition="{f:format.date(format: 'd-m-Y', date: event.startsAt)} != {f:format.date(format: 'd-m-Y', date: event.endsAt)}">
+			<f:then>
+				<f:comment>Anderer Tag</f:comment>
+				- <f:format.date format="%e. %B %Y %H:%M">{event.endsAt}</f:format.date>
+			</f:then>
+			<f:else>
+				<f:comment>Gleicher Tag andere Uhrzeit</f:comment>
+				- <f:format.date format="H:i">{event.endsAt}</f:format.date>
+			</f:else>
+		</f:if>
+	</f:if>
+	Uhr
+</html>

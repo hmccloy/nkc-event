@@ -1,0 +1,49 @@
+
+plugin.tx_nkcevent {
+    settings {
+        # cat=plugin.tx_nkcevent/file; type=string; label=Page ID Event Detail
+        pidEventSingle = 152
+
+        # cat=plugin.tx_nkcevent/file; type=string; label=Page ID Event Liste
+        pidEventList = 65
+
+    }
+}
+
+plugin.tx_nkcevent_main {
+    view {
+        # cat=plugin.tx_nkcevent_main/file; type=string; label=Path to template root (FE)
+        templateRootPath = EXT:nkc_event/Resources/Private/Templates/
+        # cat=plugin.tx_nkcevent_main/file; type=string; label=Path to template partials (FE)
+        partialRootPath = EXT:nkc_event/Resources/Private/Partials/
+        # cat=plugin.tx_nkcevent_main/file; type=string; label=Path to template layouts (FE)
+        layoutRootPath = EXT:nkc_event/Resources/Private/Layouts/
+    }
+    persistence {
+        # cat=plugin.tx_nkcevent_main//a; type=string; label=Default storage PID
+        storagePid =
+    }
+
+    # cat=plugin.tx_nkcevent_main//a; type=string; label=AJAX type num
+    ajaxTypeNum = 56281
+}
+
+
+plugin.tx_nkcevent_map {
+    view {
+        # cat=plugin.tx_nkcevent_map/file; type=string; label=Path to template root (FE)
+        templateRootPath = EXT:nkc_event/Resources/Private/Templates/
+        # cat=plugin.tx_nkcevent_map/file; type=string; label=Path to template partials (FE)
+        partialRootPath = EXT:nkc_event/Resources/Private/Partials/
+        # cat=plugin.tx_nkcevent_map/file; type=string; label=Path to template layouts (FE)
+        layoutRootPath = EXT:nkc_event/Resources/Private/Layouts/
+    }
+    persistence {
+        # cat=plugin.tx_nkcevent_map//a; type=string; label=Default storage PID
+        storagePid =
+    }
+
+    # cat=plugin.tx_nkcevent_map//a; type=string; label=AJAX type num
+    ajaxTypeNum = 56282
+}
+

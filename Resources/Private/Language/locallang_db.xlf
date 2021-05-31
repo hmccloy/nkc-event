@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2017-07-04T09:11:42Z" product-name="nkc_event">
+        <header/>
+        <body>
+            <trans-unit id="tx_nkc_event_domain_model_main">
+                <source>Ausgabe von Veranstaltungen</source>
+            </trans-unit>
+            <trans-unit id="tx_nkc_event_domain_model_main.description">
+                <source>Frei konfigurierbare Listen und Detail-Ansicht von Veranstaltungen</source>
+            </trans-unit>
+            <trans-unit id="tx_nkc_event_domain_model_map">
+                <source>Kartendarstellung von Veranstaltungen</source>
+            </trans-unit>
+            <trans-unit id="tx_nkc_event_domain_model_map.description">
+                <source>Frei konfigurierbare Google Karte für Veranstaltungen</source>
+            </trans-unit>
+            <trans-unit id="tx_nkcevent_domain_model_filterdate">
+                <source>Filter date</source>
+            </trans-unit>
+            <trans-unit id="tx_nkcevent_domain_model_filterdate.name">
+                <source>Frontend label</source>
+            </trans-unit>
+            <trans-unit id="tx_nkcevent_domain_model_filterdate.be_name">
+                <source>Backend label</source>
+            </trans-unit>
+            <trans-unit id="tx_nkcevent_domain_model_filterdate.date_from">
+                <source>Start date</source>
+            </trans-unit>
+            <trans-unit id="tx_nkcevent_domain_model_filterdate.date_to">
+                <source>End date</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

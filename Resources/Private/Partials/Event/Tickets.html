@@ -1,0 +1,49 @@
+<html xmlns:n="http://typo3.org/ns/Nordkirche/NkcBase/ViewHelpers"
+	  xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+    <f:if condition="{event.price.text} || {event.price.range.from} || {event.price.collectionRequested} || {event.price.reduction} || {event.numberedSeats} || {event.ticketSaleText}">
+        <h2>Tickets und Verkaufstellen</h2>
+        <dl>
+            <f:if condition="{event.price.text} || {event.price.range.from}">
+                <dt>Kosten</dt>
+                <f:if condition="{event.price.range.from} && {event.price.range.to}">
+                    <f:then>
+                        <dd>
+                            <f:format.number decimals="2" decimalSeparator=",">{event.price.range.from}</f:format.number>&euro; - <f:format.number decimals="2" decimalSeparator=",">{event.price.range.to}</f:format.number>&euro;
+                        </dd>
+                    </f:then>
+                    <f:else>
+                        <f:if condition="{event.price.text}">
+                            <dd>
+                                <f:format.nl2br>{event.price.text}</f:format.nl2br>
+                            </dd>
+                        </f:if>
+                    </f:else>
+                </f:if>
+            </f:if>
+
+            <f:if condition="{event.price.collectionRequested}">
+                <dt></dt>
+                <dd>Kollekte erbeten</dd>
+            </f:if>
+
+            <f:if condition="{event.price.reduction}">
+                <dt>Ermäßigung</dt>
+                <dd>Ja</dd>
+            </f:if>
+
+            <f:if condition="{event.numberedSeats}">
+                <dt>Nummerierte Plätze</dt>
+                <dd>Ja</dd>
+            </f:if>
+
+            <f:if condition="{event.ticketSaleText}">
+                <dt>Verkaufsstellen</dt>
+                <dd>
+                    <f:format.html><n:doubleLineBreak>{event.ticketSaleText}</n:doubleLineBreak></f:format.html>
+                </dd>
+            </f:if>
+        </dl>
+    </f:if>
+</html>

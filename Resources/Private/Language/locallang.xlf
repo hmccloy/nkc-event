@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2017-07-04T09:11:42Z" product-name="nkc_event">
+        <header/>
+        <body>
+            <trans-unit id="filterDate.nextWeek">
+                <source>Diese Woche</source>
+            </trans-unit>
+            <trans-unit id="filterDate.nextFourWeek">
+                <source>Die nächsten 4 Wochen</source>
+            </trans-unit>
+            <trans-unit id="filterDate.nextQuarter">
+                <source>Die nächsten 3 Monate</source>
+            </trans-unit>
+            <trans-unit id="filterDate.nextHalfYear">
+                <source>Die nächsten 6 Monate</source>
+            </trans-unit>
+            <trans-unit id="date.day.0">
+                <source>So</source>
+            </trans-unit>
+            <trans-unit id="date.day.1">
+                <source>Mo</source>
+            </trans-unit>
+            <trans-unit id="date.day.2">
+                <source>Di</source>
+            </trans-unit>
+            <trans-unit id="date.day.3">
+                <source>Mi</source>
+            </trans-unit>
+            <trans-unit id="date.day.4">
+                <source>Do</source>
+            </trans-unit>
+            <trans-unit id="date.day.5">
+                <source>Fr</source>
+            </trans-unit>
+            <trans-unit id="date.day.6">
+                <source>Sa</source>
+            </trans-unit>
+
+        </body>
+    </file>
+</xliff>

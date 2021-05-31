@@ -1,0 +1,10 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+    <f:if condition="{event.compositions->f:count()}">
+        <h2>Komponisten und Stücke</h2>
+        <ul>
+        <f:for each="{event.compositions}" as="composition">
+            <li>{composition.title} ({composition.first_name} {composition.last_name})</li>
+        </f:for>
+        </ul>
+    </f:if>
+</html>

@@ -1,0 +1,58 @@
+<html xmlns:n="http://typo3.org/ns/Nordkirche/NkcBase/ViewHelpers"
+      xmlns:nkg="http://typo3.org/ns/Nordkirche/NkGoogleMap/ViewHelpers"
+      xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
+      xmlns:v="http://typo3.org/ns/FluidTYPO3/Vhs"
+      data-namespace-typo3-fluid="true">
+
+    <f:layout name="Default" />
+
+    <f:section name="main">
+
+        <f:if condition="{mapMarkers}">
+            <f:then>
+                <f:comment>
+                    Default view with loaded markers
+                </f:comment>
+                <nkg:widget.googleMap markers="{mapMarkers}" configuration="{center: settings.flexform.center, lon: settings.flexform.longitude, lat: settings.flexform.latitude, facets: facets, header: settings.flexform.header, header_layout: settings.flexform.header_layout, cssClass: 'wide'}" />
+            </f:then>
+            <f:else>
+                <f:comment>
+                    Async loading of markers
+                </f:comment>
+                <nkg:widget.googleMap requestUri="{requestUri}" streamUri="{streamUri}" configuration="{center: settings.flexform.center, lon: settings.flexform.longitude, lat: settings.flexform.latitude, facets: facets, header: settings.flexform.header, header_layout: settings.flexform.header_layout, cssClass: 'wide', pagination: 'tx_nkcevent_map[page]'}" />
+            </f:else>
+        </f:if>
+
+        <div class="event-list">
+            <div class="container">
+                <f:if condition="{settings.flexform.paginate.mode} > 1">
+                    <f:then>
+                        <n:widget.paginate objects="{events}" as="paginatedEvents" configuration="{settings.flexform.paginate}">
+                            <f:for each="{paginatedEvents}" as="event">
+                                <f:render partial="Event/Teaser" arguments="{event: event}"/>
+                            </f:for>
+                        </n:widget.paginate>
+                    </f:then>
+                    <f:else>
+                        <div class="ajax-list-wrapper">
+                            <div class="ajax-list">
+                                <f:for each="{events}" as="event">
+                                    <f:render partial="Event/Teaser" arguments="{event: event}"/>
+                                </f:for>
+                            </div>
+                            <f:if condition="{settings.flexform.paginate.mode} == 1">
+                                <f:if condition="{events.pageCount} >= {query->n:nextPage()}">
+                                    <div class="ajax-list__next-page" data-request-uri="{f:uri.action(action: 'list', arguments: {currentPage: '{query->n:nextPage()}', searchRequest: searchRequest.array}, additionalParams: {type: settings.ajaxListTypeNum, uid: content.uid})}">
+                                        <v:render.template file="EXT:nkc_base/Resources/Private/Partials/LoadMoreButton.html" />
+                                    </div>
+                                </f:if>
+                            </f:if>
+                        </div>
+                    </f:else>
+                </f:if>
+            </div>
+        </div>
+
+    </f:section>
+
+</html>

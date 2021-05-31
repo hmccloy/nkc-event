@@ -1,0 +1,16 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+
+    <f:layout name="Default" />
+
+    <f:section name="main">
+
+        <f:if condition="{settings.flexform.searchFormTemplate} != 'Default'">
+            <f:then>
+                <f:render partial="Event/SearchForm{settings.flexform.searchFormTemplate}" arguments="{searchRequest : searchRequest, searchPid : searchPid, filter: filter, content: content}" />
+            </f:then>
+            <f:else>
+                <f:render partial="Event/SearchForm" arguments="{searchRequest : searchRequest, searchPid : searchPid, filter: filter, content: content}" />
+            </f:else>
+        </f:if>
+    </f:section>
+</html>

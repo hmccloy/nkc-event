@@ -1,0 +1,93 @@
+<html xmlns:v="http://typo3.org/ns/FluidTYPO3/Vhs"
+      xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+    <f:if condition="{settings.flexform.header}">
+        <f:then>
+            <h{settings.flexform.header_layout}>{settings.flexform.header}</h{settings.flexform.header_layout}>
+        </f:then>
+        <f:else>
+            <h1>
+                Veranstaltungen
+                <f:if condition="{organizer}">
+                    von <v:render.template file="EXT:nkc_address/Resources/Private/Partials/Institution/Name.html" variables="{institution: organizer}" />
+                </f:if>
+            </h1>
+        </f:else>
+    </f:if>
+
+
+    <form action="/" method="get">
+        <input type="hidden" name="tx_nkcevent_main[action]" value="search" />
+        <input type="hidden" name="id" value="{searchPid}" />
+        <input type="hidden" name="no_cache" value="1" />
+        <input type="hidden" name="tx_nkcevent_main[searchRequest][organizer]" value="{searchRequest.organizer}" />
+        <f:if condition="{filter.cities}">
+            <label>Orte</label>
+            <ul>
+                <li data-caption="Orte" data-value="">Orte</li>
+                <f:for each="{filter.cities}" as="city">
+                    <li data-caption="{city.name}" data-value="{city.name}">
+                        <a>{city.name}</a>
+                        <f:if condition="{city.locations}">
+                        <ul>
+                            <f:for each="{city.locations}" as="location">
+                                <li data-caption="{location.name}" data-value="{location.name}">{location.name}</li>
+                            </f:for>
+                        </ul>
+                        </f:if>
+                    </li>
+                </f:for>
+                <li>
+                    <input name="tx_nkcevent_main[searchRequest][location]" type="hidden" value="{searchRequest.location}" />
+                    <input name="tx_nkcevent_main[searchRequest][city]" type="text" placeholder="PLZ &#x2F; Orte" value="{searchRequest.city}" />
+                    <button type="submit"></button>
+                </li>
+            </ul>
+        </f:if>
+
+        <f:if condition="{filter.categories}">
+            <label>Rubrik</label>
+            <input name="tx_nkcevent_main[searchRequest][category]" type="hidden" value="{searchRequest.category}" />
+            <ul>
+                <li data-caption="Rubrik" data-value="">Rubrik</li>
+                <f:for each="{filter.categories}" as="category">
+                    <li data-caption="{category.label}" data-value="{category.uid}">
+                        <a href="">{category.label}</a>
+                    </li>
+                </f:for>
+            </ul>
+        </f:if>
+
+        <f:if condition="{searchRequest.dateFrom} && {searchRequest.dateTo}">
+            <f:then>
+                {searchRequest.dateFrom->f:format.date(format: 'd.m.Y')} bis {searchRequest.dateTo->f:format.date(format: 'd.m.Y')}
+            </f:then>
+            <f:else if="{searchRequest.dateFrom}">
+                Ab {searchRequest.dateFrom->f:format.date(format: 'd.m.Y')}
+            </f:else>
+            <f:else if="{searchRequest.dateTo}">
+                Bis {searchRequest.dateTo->f:format.date(format: 'd.m.Y')}
+            </f:else>
+            <f:else>
+                Datum
+            </f:else>
+        </f:if>
+
+        <ul>
+            <li data-caption="Datum" data-value="">Datum</li>
+            <f:for each="{filter.dates}" as="date">
+                <li data-caption="{date.name}" data-value-min="{date.dateFrom->f:format.date(format: 'd.m.Y')}" data-value-max="{date.dateTo->f:format.date(format: 'd.m.Y')}"><a href="#" class="form-field__caption">{date.name}</a></li>
+            </f:for>
+            <li>
+                <input name="tx_nkcevent_main[searchRequest][dateFrom]" value="{searchRequest.dateFrom->f:format.date(format: 'd.m.Y')}" type="text" placeholder="Von" />
+                <input name="tx_nkcevent_main[searchRequest][dateTo]" value="{searchRequest.dateTo->f:format.date(format: 'd.m.Y')}" type="text" placeholder="Bis" />
+            </li>
+        </ul>
+
+        <input name="tx_nkcevent_main[searchRequest][search]" type="text" placeholder="Suchbegriff" value="{searchRequest.search}" />
+
+        <button type="submit" ></button>
+
+    </form>
+</html>

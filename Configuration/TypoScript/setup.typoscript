@@ -1,0 +1,245 @@
+
+plugin.tx_nkcevent_main {
+    view {
+        templateRootPaths.0 = EXT:nkc_event/Resources/Private/Templates/
+        templateRootPaths.1 = {$plugin.tx_nkcevent_main.view.templateRootPath}
+        partialRootPaths.0 = EXT:nkc_event/Resources/Private/Partials/
+        partialRootPaths.1 = {$plugin.tx_nkcevent_main.view.partialRootPath}
+        layoutRootPaths.0 = EXT:nkc_event/Resources/Private/Layouts/
+        layoutRootPaths.1 = {$plugin.tx_nkcevent_main.view.layoutRootPath}
+    }
+    persistence {
+        storagePid = {$plugin.tx_nkcevent_main.persistence.storagePid}
+        #recursive = 1
+    }
+    features {
+        skipDefaultArguments = 1
+    }
+    mvc {
+        callDefaultActionIfActionCantBeResolved = 1
+    }
+
+    settings {
+        socialMediaChannels < plugin.tx_nkcaddress_person.settings.socialMediaChannels
+
+        eventIconName = /typo3conf/ext/nkc_base/Resources/Public/MapIcons/event_%s.svg
+
+        monthIcon = /typo3conf/ext/nkc_base/Resources/Public/Icons/icon_calendar_month.svg
+
+        downloadIcon = /typo3conf/ext/nkc_base/Resources/Public/Icons/link_download.svg
+
+        downloadBaseUrl = https://www.nordkirche.de/
+
+        digitalEventCategoryId = 606
+
+        mapping {
+            eventType {
+                church_service = Gottesdienst
+                digital-church_service = Gottesdienst (digital)
+
+                committee = Gremien
+                digital-committee = Gremien (digital)
+
+                default = Gemeindeleben
+                digital-default = Gemeindeleben (digital)
+
+                edu = Bildung
+                digital-edu = Bildung (digital)
+
+                event = Gemeindeleben
+                digital-event = Gemeindeleben (digital)
+
+                leisure = Freizeit
+                digital-leisure = Freizeit (digital)
+
+                music = Konzerte
+                digital-music = Konzerte (digital)
+
+                spirituality = Spiritualitaet
+                digital-spirituality = Spiritualitaet (digital)
+
+                base = Gemeindeleben
+                digital-base = Gemeindeleben (digital)
+
+            }
+
+            eventIcon {
+                church_service = gottesdienst
+                committee = gremien
+                default = gemeindeleben
+                edu = bildung
+                event = gemeindeleben
+                leisure = freizeit
+                music = konzerte
+                spirituality = spiritualitaet
+                base = gemeindeleben
+
+                digital-church_service = digital-gottesdienst
+                digital-committee = digital-gremien
+                digital-default = digital-gemeindeleben
+                digital-edu = digital-bildung
+                digital-event = digital-gemeindeleben
+                digital-leisure = digital-freizeit
+                digital-music = digital-konzerte
+                digital-spirituality = digital-spiritualitaet
+                digital-base = digital-gemeindeleben
+            }
+        }
+
+        paginate {
+            itemsPerPage = 25
+        }
+
+        flexformDefault {
+            pidSingle = {$plugin.tx_nkcevent.settings.pidEventSingle}
+            pidList = {$plugin.tx_nkcevent.settings.pidEventList}
+        }
+
+        maxItems = 25
+
+        ajaxTypeNum = {$plugin.tx_nkcevent_map.ajaxTypeNum}
+
+        ajaxListTypeNum = {$plugin.tx_nkcevent_main.ajaxTypeNum}
+
+        relativeFilterDates {
+
+            1 {
+                time = 604800
+                label = filterDate.nextWeek
+            }
+            2 {
+                time = 2419200
+                label = filterDate.nextFourWeek
+            }
+            3 {
+                time = 7257600
+                label = filterDate.nextQuarter
+            }
+            4 {
+                time = 14515200
+                label = filterDate.nextHalfYear
+            }
+        }
+
+    }
+}
+
+
+plugin.tx_nkcevent_map {
+    view {
+        templateRootPaths.0 = EXT:nkc_event/Resources/Private/Templates/
+        templateRootPaths.1 = {$plugin.tx_nkcevent_map.view.templateRootPath}
+        partialRootPaths.0 = EXT:nkc_event/Resources/Private/Partials/
+        partialRootPaths.1 = {$plugin.tx_nkcevent_map.view.partialRootPath}
+        layoutRootPaths.0 = EXT:nkc_event/Resources/Private/Layouts/
+        layoutRootPaths.1 = {$plugin.tx_nkcevent_map.view.layoutRootPath}
+    }
+    persistence {
+        storagePid = {$plugin.tx_nkcevent_map.persistence.storagePid}
+        #recursive = 1
+    }
+    features {
+        #skipDefaultArguments = 1
+        # if set to 1, the enable fields are ignored in BE context
+        ignoreAllEnableFieldsInBe = 0
+        # Should be on by default, but can be disabled if all action in the plugin are uncached
+        requireCHashArgumentForActionArguments = 1
+    }
+    mvc {
+        #callDefaultActionIfActionCantBeResolved = 1
+    }
+
+    settings {
+
+        eventIconName < plugin.tx_nkcevent_main.settings.eventIconName
+
+        mapping < plugin.tx_nkcevent_main.settings.mapping
+
+        digitalEventCategoryId < plugin.tx_nkcevent_main.settings.digitalEventCategoryId
+
+        ajaxTypeNum = {$plugin.tx_nkcevent_map.ajaxTypeNum}
+
+        ajaxListTypeNum = {$plugin.tx_nkcevent_main.ajaxTypeNum}
+
+        monthIcon = /typo3conf/ext/nkc_base/Resources/Public/Icons/icon_calendar_month.svg
+
+        maxItems = 50
+
+        asyncLoadingMaxItems = 30
+
+        paginate {
+            itemsPerPage = 20
+            insertAbove = 1
+            insertBelow = 1
+            templatePath =
+            prevNextHeaderTags = 1
+            maximumNumberOfLinks = 3
+        }
+
+        flexformDefault {
+            pidSingle = {$plugin.tx_nkcevent.settings.pidEventSingle}
+            pidList = {$plugin.tx_nkcevent.settings.pidEventList}
+        }
+
+    }
+}
+
+[getTSFE().type == {$plugin.tx_nkcevent_main.ajaxTypeNum}]
+lib.contentElement.settings.additionalConfig.plainResult = 1
+[global]
+
+
+ajaxEvents = PAGE
+ajaxEvents {
+    typeNum = {$plugin.tx_nkcevent_main.ajaxTypeNum}
+
+    config {
+        disableAllHeaderCode = 1
+        disableCharsetHeader = 1
+        disablePrefixComment = 1
+    }
+
+    10 = CONTENT
+    10 {
+        table = tt_content
+        select.pidInList = this
+        select.uidInList = ###UID###
+        select.markers {
+            UID.data = GP:uid
+            UID.intval = 1
+        }
+    }
+}
+
+[getTSFE().type == {$plugin.tx_nkcevent_map.ajaxTypeNum}]
+    lib.contentElement.settings.additionalConfig.plainResult = 1
+[global]
+
+mapEventData = PAGE
+mapEventData {
+    typeNum = {$plugin.tx_nkcevent_map.ajaxTypeNum}
+
+    config {
+        disableAllHeaderCode = 1
+        disableCharsetHeader = 1
+        disablePrefixComment = 1
+
+        additionalHeaders {
+            10 {
+                header = Content-Type: application/json; charset=utf-8
+                replace = 1
+            }
+        }
+    }
+
+    10 = CONTENT
+    10 {
+        table = tt_content
+        select.pidInList = this
+        select.uidInList = ###UID###
+        select.markers {
+            UID.data = GP:uid
+            UID.intval = 1
+        }
+    }
+}

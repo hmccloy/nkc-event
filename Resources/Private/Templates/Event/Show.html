@@ -1,0 +1,129 @@
+<html xmlns:n="http://typo3.org/ns/Nordkirche/NkcBase/ViewHelpers"
+      xmlns:nkg="http://typo3.org/ns/Nordkirche/NkGoogleMap/ViewHelpers"
+      xmlns:v="http://typo3.org/ns/FluidTYPO3/Vhs"
+      xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+    <f:layout name="Default" />
+
+    <f:section name="main">
+
+        <f:if condition="{event}">
+
+            <f:then>
+
+                <n:titleTag>
+                    <f:format.htmlentitiesDecode>
+                        {event.title}
+                    </f:format.htmlentitiesDecode>
+                </n:titleTag>
+
+
+                <f:if condition="{event.kicker}">
+                    <p>{event.kicker}</p>
+                </f:if>
+                <h1>{event.title}</h1>
+                <p>
+                    <f:render partial="Event/Date" arguments="{event: event}" /><br />
+                    {event.locationName} | <f:render partial="Event/AddressShort" arguments="{address: event.address}" />
+                </p>
+
+                <f:if condition="{event.picture}">
+                    <img title="{event.title}" alt="" src="{n:uri.image(image: event.picture, width: '800c', height: '500c')}" />
+                </f:if>
+
+                <table cellpadding="0" cellspacing="0">
+                    <tbody>
+                        <f:if condition="{event.lead}">
+                            <tr>
+                                <td><strong>Leitung:</strong></td>
+                                <td><span>{event.lead}</span></td>
+                            </tr>
+                        </f:if>
+                        <tr>
+                            <td><strong>Veranstalter:</strong></td>
+                            <td><span>
+                                <f:link.page additionalParams="{tx_nkcaddress_institution : {uid: event.chiefOrganizer.id}}" pageUid="{settings.flexform.pidInstitutionSingle}">
+                                    <v:render.template file="EXT:nkc_address/Resources/Private/Partials/Institution/Name.html" variables="{institution: event.chiefOrganizer}" />
+                                </f:link.page>
+
+                                <f:if condition="{event.textOrganizers}">
+                                    <f:format.html><n:doubleLineBreak>{event.textOrganizers}</n:doubleLineBreak></f:format.html>
+                                </f:if>
+                            </span></td>
+                        </tr>
+                        <f:if condition="{event.externalLink}">
+                            <tr>
+                                <td><strong>Digitales Angebot:</strong></td>
+                                <td>
+                                    <span>{event.externalLink -> n:makeClickable()}</span>
+                                </td>
+                            </tr>
+                        </f:if>
+                        <f:if condition="{event.organizers.recordCount} > 1">
+                            <tr>
+                                <td><strong>Mitveranstalter:</strong></td>
+                                <td><span>
+                                    <f:for each="{event.organizers}" as="organizer">
+                                        <f:link.page additionalParams="{tx_nkcaddress_institution : {uid: event.chiefOrganizer.id}}" pageUid="{settings.flexform.pidInstitutionSingle}">
+                                            <v:render.template file="EXT:nkc_address/Resources/Private/Partials/Institution/Name.html" variables="{institution: organizer}" />
+                                        </f:link.page>
+                                        <br />
+                                    </f:for>
+                                </span></td>
+                            </tr>
+                        </f:if>
+                    </tbody>
+                </table>
+
+                <f:format.html>
+                    {event.description}
+                </f:format.html>
+
+                <f:render partial="Event/Share" arguments="{event: event, settings: settings}" />
+
+                <p><f:render partial="Event/Tags" arguments="{event : event, settings: settings}"/></p>
+
+                <p><f:render partial="Event/Categories" arguments="{event : event}"/></p>
+
+                <f:link.action action="export" arguments="{uid : event.id}">
+                    <p>Termin in persönlichen Kalender übernehmen (ics)</p>
+                </f:link.action>
+
+                <f:if condition="{event.participantsText}">
+                    <p>
+                        <strong>Mitwirkende:</strong>
+                        <f:format.html><n:doubleLineBreak>{event.participantsText}</n:doubleLineBreak></f:format.html>
+                    </p>
+                </f:if>
+
+                <f:if condition="{event.hints}">
+                    <p>
+                        <strong>Technische Hinweise</strong>
+                        <f:format.html><n:doubleLineBreak>{event.hints}</n:doubleLineBreak></f:format.html>
+                    </p>
+                </f:if>
+
+
+                <f:if condition="{mapMarker}">
+                    <nkg:widget.googleMap markers="{0: mapMarker}" configuration="" />
+                </f:if>
+
+                <f:render partial="Event/Files" arguments="{event : event}"/>
+
+               <f:render partial="Event/Composers" arguments="{event : event}"/>
+
+                <f:render partial="Event/Participants" arguments="{event : event}"/>
+
+                <f:render partial="Event/Tickets" arguments="{event : event}"/>
+
+            </f:then>
+            <f:else>
+                <h2>Entschuldigung</h2>
+                <h3>Die Veranstaltung konnte leider nicht gefunden werden.</h3>
+            </f:else>
+
+        </f:if>
+
+    </f:section>
+</html>

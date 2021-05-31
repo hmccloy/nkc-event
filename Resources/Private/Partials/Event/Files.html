@@ -1,0 +1,20 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<f:if condition="{event.files}">
+		<ul>
+			<f:for each="{event.files}" as="file">
+				<li>
+					<a href="{settings.downloadBaseUrl}{file.url}" target="_blank">
+						<f:if condition="{file.title}">
+							<f:then>
+								{file.title}
+							</f:then>
+							<f:else>
+								{file.filename}
+							</f:else>
+						</f:if>
+					</a>
+				</li>
+			</f:for>
+		</ul>
+	</f:if>
+</html>

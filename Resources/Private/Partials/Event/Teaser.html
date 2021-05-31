@@ -1,0 +1,50 @@
+<html xmlns:n="http://typo3.org/ns/Nordkirche/NkcBase/ViewHelpers"
+      xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
+      xmlns:v="http://typo3.org/ns/FluidTYPO3/Vhs/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+    <f:if condition="{settings.flexform.pidSingle}">
+        <f:then>
+            <v:variable.set name="pidSingle" value="{settings.flexform.pidSingle}" />
+        </f:then>
+        <f:else>
+            <v:variable.set name="pidSingle" value="{settings.flexform.pidEventSingle}" />
+        </f:else>
+    </f:if>
+
+    <f:if condition="{event.picture}">
+        <f:then>
+            <f:link.page pageUid="{pidSingle}" additionalParams="{tx_nkcevent_main: {uid: event.id}}">
+                <img title="{event.title}" alt="" src="{n:uri.image(image: event.picture, width: '275c', height: '183c')}" />
+            </f:link.page>
+        </f:then>
+    </f:if>
+
+    <f:image src="{settings.monthIcon}" alt="" />
+
+    <h2>
+    <f:link.page pageUid="{pidSingle}" additionalParams="{tx_nkcevent_main: {uid: event.id}}">
+        {event.title}
+    </f:link.page>
+    </h2>
+
+    <v:render.template file="EXT:nkc_event/Resources/Private/Partials/Event/DateShort.html" variables="{event: event}" />
+
+    {event.locationName} <br>
+    <v:render.template file="EXT:nkc_event/Resources/Private/Partials/Event/AddressShort.html" variables="{address: event.address}" />
+
+    <f:if condition="{event.teaserText}">
+        <f:then>
+            <f:format.crop maxCharacters="120" append="...">{event.teaserText}</f:format.crop>
+        </f:then>
+        <f:else if="{event.description}">
+            <f:format.crop maxCharacters="120" append="..."><f:format.stripTags>{event.description}</f:format.stripTags></f:format.crop>
+        </f:else>
+    </f:if>
+
+    <f:link.page pageUid="{pidSingle}" additionalParams="{tx_nkcevent_main: {uid: event.id}}" class="search-result__link">&nbsp;</f:link.page>
+
+</html>
+
+
+
