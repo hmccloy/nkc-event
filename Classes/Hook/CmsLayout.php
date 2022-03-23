@@ -119,6 +119,7 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
                 'institutionCollection' => $this->getFieldFromFlexform('settings.flexform.institutionCollection', 'sMarker'),
                 'eventCollection' => $this->getFieldFromFlexform('settings.flexform.eventCollection', 'sMarker'),
                 'categories' => $this->getFieldFromFlexform('settings.flexform.categories', 'sMarker'),
+                'selectCategoryOption' => $this->getFieldFromFlexform('settings.flexform.selectCategoryOption', 'sMarker'),
                 'cities' => $this->getFieldFromFlexform('settings.flexform.cities', 'sMarker'),
                 'zipCodes' => $this->getFieldFromFlexform('settings.flexform.zipCodes', 'sMarker'),
                 'dateFrom' => $this->getFieldFromFlexform('settings.flexform.dateFrom', 'sMarker'),

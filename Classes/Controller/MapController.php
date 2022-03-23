@@ -3,6 +3,7 @@
 namespace Nordkirche\NkcEvent\Controller;
 
 use Nordkirche\Ndk\Domain\Model\Event\Event;
+use Nordkirche\Ndk\Domain\Query\EventQuery;
 use Nordkirche\Ndk\Domain\Repository\EventRepository;
 use Nordkirche\Ndk\Service\NapiService;
 use Nordkirche\NkcBase\Controller\BaseController;
@@ -10,6 +11,7 @@ use Nordkirche\NkcBase\Service\ApiService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\View\JsonView;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+use Nordkirche\Ndk\Service\Interfaces\QueryInterface;
 
 class MapController extends BaseController
 {
@@ -273,7 +275,7 @@ class MapController extends BaseController
     }
 
     /**
-     * @param $query
+     * @param EventQuery $query
      * @param array $settings
      * @param bool $allItems
      * @return array
@@ -293,7 +295,13 @@ class MapController extends BaseController
 
         // Categories
         if ($settings['flexform']['categories']) {
-            $query->setCategoriesOr(GeneralUtility::intExplode(',', $settings['flexform']['categories']));
+            $categories = GeneralUtility::trimExplode(',', $settings['flexform']['categories']);
+            if ($settings['flexform']['selectCategoryOption'] == QueryInterface::OPERATOR_AND) {
+                $query->setCategoriesAnd($categories);
+            } else {
+                $query->setCategoriesOr($categories);
+            }
+
         }
 
         // Cities
@@ -325,6 +333,8 @@ class MapController extends BaseController
             $dateTo = new \DateTime(date('d.m.Y', time() + ((int)$settings['flexform']['numDays'] * 86400)));
             $query->setTimeToEnd($dateTo);
         }
+
+        $query->setPageSize(50);
 
         if ($this->getEventsByQuery($query, $allItems, $mapItems) === false) {
             return [true, $mapItems];

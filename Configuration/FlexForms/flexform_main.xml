@@ -27,6 +27,10 @@
 										<numIndex index="0">Detailansicht Veranstaltung</numIndex>
 										<numIndex index="1">Event->show;Event->export</numIndex>
 									</numIndex>
+									<numIndex index="4">
+										<numIndex index="0">Weiterleitung zur Event-Ansicht</numIndex>
+										<numIndex index="1">Event->redirect</numIndex>
+									</numIndex>
 								</items>
 								<default>Event->list;Event->search;Event->data;Event->paginatedData</default>
 							</config>
