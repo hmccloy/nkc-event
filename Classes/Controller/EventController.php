@@ -178,9 +178,25 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
         // Filter by organizer
         $this->setOrganizersFilter($query, $flexform['institutionCollection']);
 
+        // Filter by target group
+        $this->setTargetGroupFilter($query, $flexform['targetGroupCollection']);
+
         if ($flexform['eventTypes']) {
             $eventTypes = GeneralUtility::trimExplode(',', $flexform['eventTypes']);
             $query->setEventType($eventTypes[0]);
+        }
+
+        if ($flexform['eventLocation']) {
+
+            if ($this->napiService === null) {
+                $this->api = ApiService::get();
+                $this->napiService = $this->api->factory(NapiService::class);
+            }
+
+            $eventLocation = $this->napiService->resolveUrl($flexform['eventLocation']);
+            if ($eventLocation->getName()) {
+                $query->setLocation($eventLocation->getName());
+            }
         }
 
         if ($flexform['categories']) {
@@ -228,6 +244,19 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
             $query->setOrganizers($resourceArray);
         }
     }
+
+    /**
+     * @param $query
+     * @param $filter
+     */
+    private function setTargetGroupFilter($query, $filter)
+    {
+        if ($filter) {
+            $resourceArray = GeneralUtility::trimExplode(',', $filter);
+            $query->setTargetGroups($resourceArray);
+        }
+    }
+
 
     /**
      * @param \Nordkirche\Ndk\Domain\Query\EventQuery $query

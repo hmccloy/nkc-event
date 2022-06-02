@@ -125,6 +125,37 @@
 						</TCEforms>
 					</settings.flexform.institutionCollection>
 
+					<settings.flexform.eventLocation>
+						<TCEforms>
+							<label>Veranstaltungen an diesem Ort darstellen</label>
+							<config>
+								<type>user</type>
+								<renderType>napiItemSelector</renderType>
+								<allowed>eventLocation</allowed>
+								<minItems>0</minItems>
+								<maxItems>1</maxItems>
+								<size>1</size>
+							</config>
+							<displayCond>FIELD:sDEF.switchableControllerActions:=:Event->list;Event->search;Event->data;Event->paginatedData</displayCond>
+						</TCEforms>
+					</settings.flexform.eventLocation>
+
+					<settings.flexform.targetGroupCollection>
+						<TCEforms>
+							<label>Veranstaltungen für diese Zielgruppen darstellen</label>
+							<config>
+								<type>select</type>
+								<renderType>selectMultipleSideBySide</renderType>
+								<itemsProcFunc>Nordkirche\NkcBase\CustomField\SelectObject->createNapiItems</itemsProcFunc>
+								<allowed>targetGroup</allowed>
+								<minItems>0</minItems>
+								<maxItems>99</maxItems>
+								<size>10</size>
+							</config>
+							<displayCond>FIELD:sDEF.switchableControllerActions:=:Event->list;Event->search;Event->data;Event->paginatedData</displayCond>
+						</TCEforms>
+					</settings.flexform.targetGroupCollection>
+
 					<settings.flexform.categories>
 						<TCEforms>
 							<label>Veranstaltungen mit diesen Kategorien darstellen</label>
