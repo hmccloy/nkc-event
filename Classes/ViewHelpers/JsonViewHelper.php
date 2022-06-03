@@ -2,6 +2,7 @@
 namespace  Nordkirche\NkcEvent\ViewHelpers;
 
 use Nordkirche\Ndk\Domain\Model\Event\Event;
+use Nordkirche\Ndk\Domain\Model\File\Image;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class JsonViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
@@ -11,6 +12,8 @@ class JsonViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelpe
      * @var bool
      */
     protected $escapeOutput = false;
+
+
 
     /**
      * Initialize arguments.
@@ -37,6 +40,12 @@ class JsonViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelpe
 
         if ($event instanceof Event) {
 
+            if ($event->getPicture() instanceof Image) {
+                $image = $event->getPicture()->render(600);
+            } else {
+                $image = '';
+            }
+
             $result = [
                 '@context'  => 'https://schema.org',
                 '@type'     => 'Event',
@@ -52,16 +61,17 @@ class JsonViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelpe
                     ],
                 'name' => $event->getTitle(),
                 'description' => $event->getDescription(),
+                'image' => $image,
                 'startDate' => $event->getStartsAt()->format("Y-m-d\TH:i")
             ];
 
             $price = $event->getPrice();
 
-            if (isset($price['range']['from'])) {
+            if (isset($price['range']['from']) || isset($price['range']['to'])) {
 
                 $result['offers'] = [
                     '@type' => 'Offer',
-                    'price' => $price['range']['from'],
+                    'price' => (bool) $price['range']['from'] ? $price['range']['from'] : $price['range']['to'],
                     'priceCurrency' => 'EUR'
                 ];
 

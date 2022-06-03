@@ -77,6 +77,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
     /**
      * @param int $currentPage
      * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
+     * @throws \Nordkirche\NkcBase\Exception\ApiException
      */
     public function listAction($currentPage = 1, $searchRequest = null)
     {
@@ -171,6 +172,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
     /**
      * @param \Nordkirche\Ndk\Domain\Query\EventQuery $query
      * @param array $flexform
+     * @throws \Nordkirche\NkcBase\Exception\ApiException
      */
     public function setFlexformFilters($query, $flexform)
     {
