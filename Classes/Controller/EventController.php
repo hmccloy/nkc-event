@@ -666,7 +666,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
 
         $query->setPageSize(50);
 
-        $query->setInclude([Event::RELATION_ADDRESS, Event::RELATION_CATEGORY, Event::RELATION_CHIEF_ORGANIZER]);
+        $query->setInclude([Event::RELATION_ADDRESS, Event::RELATION_CATEGORY]);
 
         if ($searchRequest instanceof SearchRequest) {
             $this->setUserFilters($query, $searchRequest);
@@ -696,7 +696,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
         if (!trim($mapMarkerJson) || $forceReload) {
             $this->setFlexformFilters($query, $this->settings['flexform']);
 
-            $events = ApiService::getAllItems($this->eventRepository, $query, [Event::RELATION_ADDRESS]);
+            $events = ApiService::getAllItems($this->eventRepository, $query, [Event::RELATION_ADDRESS, Event::RELATION_CATEGORY]);
 
             $mapMarkerJson = json_encode(['crdate' => time(), 'data' => $this->getMapMarkers($events)]);
 
@@ -880,12 +880,14 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
 
             $query = new \Nordkirche\Ndk\Domain\Query\EventQuery();
 
+            $includes = [Event::RELATION_CATEGORY, Event::RELATION_ADDRESS];
+
             $this->setFlexformFilters($query, $this->settings['flexform']);
 
             // Set start date - napi delivers running events
             $query->setTimeFromStart(new \DateTime(date('Y-m-d')));
 
-            $events = ApiService::getAllItems($this->eventRepository, $query, [Event::RELATION_ADDRESS]);
+            $events = ApiService::getAllItems($this->eventRepository, $query, $includes);
 
             $mapMarkerJson = json_encode(['crdate' => time(), 'data' => $this->getMapMarkers($events)]);
 
@@ -898,7 +900,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
      */
     public function showAction($uid = null)
     {
-        $includes = [];
+        $includes = [Event::RELATION_CHIEF_ORGANIZER, Event::RELATION_CATEGORY, Event::RELATION_ADDRESS];
 
         if ($this->settings['flexform']['singleEvent']) {
             // Event is selected in flexform
