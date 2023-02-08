@@ -4,6 +4,11 @@
 
     <div class="map-tooltip">
 		<div class="map-tooltip__info">
+			<f:comment>
+                <div class="image">
+                    <n:image image="{event.picture}" width="80c" height="80c" />
+                </div>
+            </f:comment>
 
 			<strong>
 				{event.title}
@@ -38,20 +43,20 @@
 						<f:comment>Speziellen Link ViewHelper nutzen</f:comment>
 						<f:if condition="{settings.flexform.pidEventSingle}">
 							<f:then>
-								<n:link.page class="link link--icon" pageUid="{settings.flexform.pidEventSingle}" additionalParams="{tx_nkcevent_main: {uid: event.id}}">Mehr erfahren</n:link.page>
+								<n:link.page pageUid="{settings.flexform.pidEventSingle}" additionalParams="{tx_nkcevent_main: {uid: event.id}}">Mehr erfahren</n:link.page>
 							</f:then>
 							<f:else>
-								<n:link.page class="link link--icon" pageUid="{settings.flexform.pidSingle}" additionalParams="{tx_nkcevent_main: {uid: event.id}}">Mehr erfahren</n:link.page>
+								<n:link.page pageUid="{settings.flexform.pidSingle}" additionalParams="{tx_nkcevent_main: {uid: event.id}}">Mehr erfahren</n:link.page>
 							</f:else>
 						</f:if>
 					</f:then>
 					<f:else>
 						<f:if condition="{settings.flexform.pidEventSingle}">
 							<f:then>
-								<f:link.page class="link link--icon" pageUid="{settings.flexform.pidEventSingle}" additionalParams="{tx_nkcevent_main: {uid: event.id}}">Mehr erfahren</f:link.page>
+								<f:link.page pageUid="{settings.flexform.pidEventSingle}" additionalParams="{tx_nkcevent_main: {uid: event.id}}">Mehr erfahren</f:link.page>
 							</f:then>
 							<f:else>
-								<f:link.page class="link link--icon" pageUid="{settings.flexform.pidSingle}" additionalParams="{tx_nkcevent_main: {uid: event.id}}">Mehr erfahren</f:link.page>
+								<f:link.page pageUid="{settings.flexform.pidSingle}" additionalParams="{tx_nkcevent_main: {uid: event.id}}">Mehr erfahren</f:link.page>
 							</f:else>
 						</f:if>
 					</f:else>
@@ -61,13 +66,11 @@
 			<f:if condition="!{addConfig.digitalEvent}">
 				<br />
 				<f:if condition="{event.address.street} && {event.address.zipCode} && {event.address.city}">
-					<a class="link link--icon" target="_blank" href="https://maps.google.de/?daddr={event.address.street}%20{event.address.zipCode}%20{event.address.city}">Route berechnen</a>
+					<a target="_blank" href="https://maps.google.de/?daddr={event.address.street}%20{event.address.zipCode}%20{event.address.city}">Route berechnen</a>
+					<br />
 				</f:if>
 			</f:if>
-
-            <br /><br />
-
 		</div>
-
     </div>
+</f:for>
 </html>

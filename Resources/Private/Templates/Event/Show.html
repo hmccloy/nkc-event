@@ -80,6 +80,12 @@
                     {event.description}
                 </f:format.html>
 
+                <f:if condition="{event.registrationLink}">
+                    <a target="_blank" href="{event.registrationLink}">
+                        Online anmelden
+                    </a>
+                </f:if>
+
                 <f:render partial="Event/Share" arguments="{event: event, settings: settings}" />
 
                 <p><f:render partial="Event/Tags" arguments="{event : event, settings: settings}"/></p>

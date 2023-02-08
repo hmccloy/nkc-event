@@ -17,6 +17,7 @@ use Nordkirche\NkcEvent\Controller\EventController;
 use Nordkirche\NkcEvent\Controller\MapController;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Hook to display verbose information about the plugin
@@ -119,6 +120,7 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
                 'institutionCollection' => $this->getFieldFromFlexform('settings.flexform.institutionCollection', 'sMarker'),
                 'eventCollection' => $this->getFieldFromFlexform('settings.flexform.eventCollection', 'sMarker'),
                 'categories' => $this->getFieldFromFlexform('settings.flexform.categories', 'sMarker'),
+                'selectCategoryOption' => $this->getFieldFromFlexform('settings.flexform.selectCategoryOption', 'sMarker'),
                 'cities' => $this->getFieldFromFlexform('settings.flexform.cities', 'sMarker'),
                 'zipCodes' => $this->getFieldFromFlexform('settings.flexform.zipCodes', 'sMarker'),
                 'dateFrom' => $this->getFieldFromFlexform('settings.flexform.dateFrom', 'sMarker'),
@@ -191,7 +193,8 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
 
         $eventRepository = $this->api->factory(EventRepository::class);
         /** @var EventController $eventController */
-        $eventController = $this->objectManager->get(EventController::class);
+        $eventController = GeneralUtility::makeInstance(EventController::class);
+
         $query = $this->api->factory(\Nordkirche\Ndk\Domain\Query\EventQuery::class);
 
         // Set pagination parameters
@@ -200,6 +203,8 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
         $flexform = [
             'eventTypes' => $this->getFieldFromFlexform('settings.flexform.eventTypes', 'sDEF'),
             'institutionCollection' => $this->getFieldFromFlexform('settings.flexform.institutionCollection', 'sDEF'),
+            'targetGroupCollection' => $this->getFieldFromFlexform('settings.flexform.targetGroupCollection', 'sDEF'),
+            'eventLocation' => $this->getFieldFromFlexform('settings.flexform.eventLocation', 'sDEF'),
             'categories' => $this->getFieldFromFlexform('settings.flexform.categories', 'sDEF'),
             'categoryOperator' => $this->getFieldFromFlexform('settings.flexform.categoryOperator', 'sDEF'),
             'geosearch' => $this->getFieldFromFlexform('settings.flexform.geosearch', 'sDEF'),
@@ -213,7 +218,7 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
 
         $eventController->setFlexformFilters($query, $flexform);
 
-        // Get institutions
+        // Get Events
         $events = $eventRepository->get($query);
 
         if ($events) {

@@ -12,11 +12,11 @@ call_user_func(
             'Nordkirche.NkcEvent',
             'Main',
             [
-                'Event' => 'list, search, searchForm, show, export, data, paginatedData'
+                'Event' => 'list, search, searchForm, show, export, data, paginatedData, redirect'
             ],
             // non-cacheable actions
             [
-                'Event' => 'export, search, paginatedData'
+                'Event' => 'export, search, paginatedData, redirect'
             ]
         );
 

@@ -30,6 +30,11 @@ plugin.tx_nkcevent_main {
 
         downloadBaseUrl = https://www.nordkirche.de/
 
+        # Der Kurzlink wird für Links von außen verwendet.
+        # Unter diesem Pfad sollte das Plugin mit der Action redirect liegen.
+        # Es leitet dann auf die Event-Detail Ansicht um
+        shortLink = /event/?nkce=
+
         digitalEventCategoryId = 606
 
         mapping {
@@ -185,7 +190,7 @@ plugin.tx_nkcevent_map {
 }
 
 [getTSFE().type == {$plugin.tx_nkcevent_main.ajaxTypeNum}]
-lib.contentElement.settings.additionalConfig.plainResult = 1
+    lib.contentElement.settings.additionalConfig.plainResult = 1
 [global]
 
 
@@ -223,13 +228,6 @@ mapEventData {
         disableAllHeaderCode = 1
         disableCharsetHeader = 1
         disablePrefixComment = 1
-
-        additionalHeaders {
-            10 {
-                header = Content-Type: application/json; charset=utf-8
-                replace = 1
-            }
-        }
     }
 
     10 = CONTENT

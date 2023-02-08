@@ -1,0 +1,46 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
+      xmlns:n="http://typo3.org/ns/Nordkirche/NkcBase/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+    <div class="map-tooltip">
+		<div class="map-tooltip__info">
+
+			<strong>
+				{event.title}
+			</strong>
+
+			<br />
+
+			<f:render partial="Event/DateShort" arguments="{event: event}" />
+
+			<br /><br />
+
+			{event.locationName}
+			<br />
+
+			<f:if condition="{addConfig.digitalEvent}">
+				<f:then>
+				    <f:if condition="{event.externalLink}">
+					    {event.externalLink -> n:makeClickable()}
+					</f:if>
+				</f:then>
+				<f:else>
+					<f:render partial="Event/Address" arguments="{address: event.address}" />
+				</f:else>
+			</f:if>
+		</div>
+
+		<div class="map-tooltip__links">
+
+            <a href="{settings.shortLink}{event.id}">Mehr erfahren</a>
+
+			<f:if condition="!{addConfig.digitalEvent}">
+				<br />
+				<f:if condition="{event.address.street} && {event.address.zipCode} && {event.address.city}">
+					<a target="_blank" href="https://maps.google.de/?daddr={event.address.street}%20{event.address.zipCode}%20{event.address.city}">Route berechnen</a>
+					<br />
+				</f:if>
+			</f:if>
+		</div>
+
+    </div>
+</html>
