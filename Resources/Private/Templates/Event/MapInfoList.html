@@ -23,16 +23,8 @@
 			{event.locationName}
 			<br />
 
-			<f:if condition="{addConfig.digitalEvent}">
-				<f:then>
-				    <f:if condition="{event.externalLink}">
-					    {event.externalLink -> n:makeClickable()}
-					</f:if>
-				</f:then>
-				<f:else>
-					<f:render partial="Event/Address" arguments="{address: event.address}" />
-				</f:else>
-			</f:if>
+			<f:render partial="Event/MapAddress" arguments="{_all}" />
+
 		</div>
 
 		<div class="map-tooltip__links">

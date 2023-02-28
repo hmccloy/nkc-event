@@ -35,36 +35,49 @@ plugin.tx_nkcevent_main {
         # Es leitet dann auf die Event-Detail Ansicht um
         shortLink = /event/?nkce=
 
-        digitalEventCategoryId = 606
+        # NAPI category Id für digitale Veranstaltungen
+        digitalEventCategoryId = 606,647
+
+        # NAPI category Id für hybride Veranstaltungen
+        hybridEventCategoryId = 646
 
         mapping {
             eventType {
                 church_service = Gottesdienst
                 digital-church_service = Gottesdienst (digital)
+                hybrid-church_service = Gottesdienst (hybrid)
 
                 committee = Gremien
                 digital-committee = Gremien (digital)
+                hybrid-committee = Gremien (hybrid)
 
                 default = Gemeindeleben
                 digital-default = Gemeindeleben (digital)
+                hybrid-default = Gemeindeleben (hybrid)
 
                 edu = Bildung
                 digital-edu = Bildung (digital)
+                hybrid-edu = Bildung (hybrid)
 
                 event = Gemeindeleben
                 digital-event = Gemeindeleben (digital)
+                hybrid-event = Gemeindeleben (hybrid)
 
                 leisure = Freizeit
                 digital-leisure = Freizeit (digital)
+                hybrid-leisure = Freizeit (hybrid)
 
                 music = Konzerte
                 digital-music = Konzerte (digital)
+                hybrid-music = Konzerte (hybrid)
 
                 spirituality = Spiritualitaet
                 digital-spirituality = Spiritualitaet (digital)
+                hybrid-spirituality = Spiritualitaet (hybrid)
 
                 base = Gemeindeleben
                 digital-base = Gemeindeleben (digital)
+                hybrid-base = Gemeindeleben (hybrid)
 
             }
 
@@ -88,6 +101,17 @@ plugin.tx_nkcevent_main {
                 digital-music = digital-konzerte
                 digital-spirituality = digital-spiritualitaet
                 digital-base = digital-gemeindeleben
+
+                hybrid-church_service = hybrid-gottesdienst
+                hybrid-committee = hybrid-gremien
+                hybrid-default = hybrid-gemeindeleben
+                hybrid-edu = hybrid-bildung
+                hybrid-event = hybrid-gemeindeleben
+                hybrid-leisure = hybrid-freizeit
+                hybrid-music = hybrid-konzerte
+                hybrid-spirituality = hybrid-spiritualitaet
+                hybrid-base = hybrid-gemeindeleben
+
             }
         }
 
@@ -161,6 +185,8 @@ plugin.tx_nkcevent_map {
         mapping < plugin.tx_nkcevent_main.settings.mapping
 
         digitalEventCategoryId < plugin.tx_nkcevent_main.settings.digitalEventCategoryId
+
+        hybridEventCategoryId < plugin.tx_nkcevent_main.settings.hybridEventCategoryId
 
         ajaxTypeNum = {$plugin.tx_nkcevent_map.ajaxTypeNum}
 
