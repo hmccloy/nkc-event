@@ -13,13 +13,13 @@
                 <f:comment>
                     Default view with loaded markers
                 </f:comment>
-                <nkg:widget.googleMap markers="{mapMarkers}" configuration="{center: settings.flexform.center, lon: settings.flexform.longitude, lat: settings.flexform.latitude, facets: facets, header: settings.flexform.header, header_layout: settings.flexform.header_layout, cssClass: 'wide'}" />
+                <nkg:googleMap markers="{mapMarkers}" configuration="{center: settings.flexform.center, lon: settings.flexform.longitude, lat: settings.flexform.latitude, facets: facets, header: settings.flexform.header, header_layout: settings.flexform.header_layout, cssClass: 'wide'}" />
             </f:then>
             <f:else>
                 <f:comment>
                     Async loading of markers
                 </f:comment>
-                <nkg:widget.googleMap requestUri="{requestUri}" streamUri="{streamUri}" configuration="{center: settings.flexform.center, lon: settings.flexform.longitude, lat: settings.flexform.latitude, facets: facets, header: settings.flexform.header, header_layout: settings.flexform.header_layout, cssClass: 'wide', requestId: 'tx_nkcevent_map[requestId]', pagination: 'tx_nkcevent_map[page]'}" />
+                <nkg:googleMap requestUri="{requestUri}" streamUri="{streamUri}" configuration="{center: settings.flexform.center, lon: settings.flexform.longitude, lat: settings.flexform.latitude, facets: facets, header: settings.flexform.header, header_layout: settings.flexform.header_layout, cssClass: 'wide', requestId: 'tx_nkcevent_map[requestId]', pagination: 'tx_nkcevent_map[page]'}" />
             </f:else>
         </f:if>
 
@@ -27,11 +27,11 @@
             <div class="container">
                 <f:if condition="{settings.flexform.paginate.mode} > 1">
                     <f:then>
-                        <n:widget.paginate objects="{events}" as="paginatedEvents" configuration="{settings.flexform.paginate}">
+                        <n:paginate objects="{events}" as="paginatedEvents" configuration="{settings.flexform.paginate}">
                             <f:for each="{paginatedEvents}" as="event">
                                 <f:render partial="Event/Teaser" arguments="{event: event}"/>
                             </f:for>
-                        </n:widget.paginate>
+                        </n:paginate>
                     </f:then>
                     <f:else>
                         <div class="ajax-list-wrapper">

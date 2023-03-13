@@ -2,6 +2,7 @@
 
 namespace Nordkirche\NkcEvent\Service;
 
+use Nordkirche\Ndk\Domain\Model\Event\Event;
 use TYPO3\CMS\Core\SingletonInterface;
 
 class ExportService implements SingletonInterface
@@ -46,7 +47,7 @@ class ExportService implements SingletonInterface
     /**
      * Return an iCalendar file as string representation suitable for sending to the client
      *
-     * @param \Nordkirche\Ndk\Domain\Model\Event\Event $event
+     * @param Event $event
      * @return string $iCalendarData
      */
     public static function iCalendarData($event)
@@ -106,7 +107,7 @@ class ExportService implements SingletonInterface
     /**
      * Return a unique identifier
      *
-     * @param \Nordkirche\Ndk\Domain\Model\Event\Event $event
+     * @param Event $event
      * @return string
      */
     public static function getUniqueIdentifier($event)

@@ -2,6 +2,22 @@
 
 namespace Nordkirche\NkcEvent\Controller;
 
+use Nordkirche\NkcBase\Controller\BaseController;
+use Nordkirche\NkcEvent\Domain\Repository\FilterDateRepository;
+use TYPO3\CMS\Extbase\Domain\Repository\CategoryRepository;
+use Nordkirche\NkcBase\Exception\ApiException;
+use Psr\Http\Message\ResponseInterface;
+use Nordkirche\Ndk\Domain\Query\EventQuery;
+use Nordkirche\Ndk\Domain\Model\Geocode;
+use Nordkirche\Ndk\Domain\Interfaces\ModelInterface;
+use Nordkirche\Ndk\Domain\Model\Address;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
+use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
+use Nordkirche\NkcEvent\Domain\Model\FilterDate;
+use TYPO3\CMS\Extbase\Domain\Model\Category;
+use Nordkirche\Ndk\Service\Result;
+use Nordkirche\Ndk\Domain\Query\InstitutionQuery;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use Nordkirche\Ndk\Domain\Model\Event\Event;
 use Nordkirche\Ndk\Domain\Model\Institution\Institution;
 use Nordkirche\Ndk\Domain\Repository\EventRepository;
@@ -20,33 +36,31 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
-class EventController extends \Nordkirche\NkcBase\Controller\BaseController
+class EventController extends BaseController
 {
 
     /**
-     * @var \Nordkirche\Ndk\Domain\Repository\EventRepository
+     * @var EventRepository
      */
     protected $eventRepository;
 
     /**
-     * @var \Nordkirche\Ndk\Domain\Repository\InstitutionRepository
+     * @var InstitutionRepository
      */
     protected $institutionRepository;
 
     /**
-     * @var \Nordkirche\Ndk\Domain\Repository\PersonRepository
+     * @var PersonRepository
      */
     protected $personRepository;
 
     /**
-     * @var \Nordkirche\NkcEvent\Domain\Repository\FilterDateRepository
-     * @TYPO3\CMS\Extbase\Annotation\Inject
+     * @var FilterDateRepository
      */
     protected $filterDateRepository;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Domain\Repository\CategoryRepository
-     * @TYPO3\CMS\Extbase\Annotation\Inject
+     * @var CategoryRepository
      */
     protected $categoryRepository;
 
@@ -75,12 +89,12 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
 
     /**
      * @param int $currentPage
-     * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
-     * @throws \Nordkirche\NkcBase\Exception\ApiException
+     * @param SearchRequest $searchRequest
+     * @throws ApiException
      */
-    public function listAction($currentPage = 1, $searchRequest = null)
+    public function listAction($currentPage = 1, $searchRequest = null): ResponseInterface
     {
-        $query = new \Nordkirche\Ndk\Domain\Query\EventQuery();
+        $query = new EventQuery();
 
         $query->setInclude([Event::RELATION_ADDRESS, Event::RELATION_CHIEF_ORGANIZER, Event::RELATION_CATEGORY]);
 
@@ -166,12 +180,13 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
             'requestUri' => $requestUri,
             'organizer' => $organizer
         ]);
+        return $this->htmlResponse();
     }
 
     /**
-     * @param \Nordkirche\Ndk\Domain\Query\EventQuery $query
+     * @param EventQuery $query
      * @param array $flexform
-     * @throws \Nordkirche\NkcBase\Exception\ApiException
+     * @throws ApiException
      */
     public function setFlexformFilters($query, $flexform)
     {
@@ -229,7 +244,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
         }
 
         if ($flexform['geosearch']) {
-            $geocode = new \Nordkirche\Ndk\Domain\Model\Geocode($flexform['latitude'], $flexform['longitude'], $flexform['radius']);
+            $geocode = new Geocode($flexform['latitude'], $flexform['longitude'], $flexform['radius']);
             $query->setGeocode($geocode);
         }
     }
@@ -260,8 +275,8 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
 
 
     /**
-     * @param \Nordkirche\Ndk\Domain\Query\EventQuery $query
-     * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
+     * @param EventQuery $query
+     * @param SearchRequest $searchRequest
      */
     private function setUserFilters($query, $searchRequest)
     {
@@ -325,7 +340,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
 
     /**
      * @param $id
-     * @return bool|\Nordkirche\Ndk\Domain\Interfaces\ModelInterface
+     * @return bool|ModelInterface
      */
     private function getOrganizer($id)
     {
@@ -386,7 +401,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
             $mappingType = 'digital-' . $mappingType;
         }
 
-        if ($address instanceof \Nordkirche\Ndk\Domain\Model\Address) {
+        if ($address instanceof Address) {
             // Check geo coordinates
             if ($address->getLatitude() && $address->getLongitude()) {
                 $marker = [
@@ -406,7 +421,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
     }
 
     /**
-     * @param \Nordkirche\Ndk\Domain\Model\Event\Event $event
+     * @param Event $event
      * @param array
      * @param string $template
      * @return string
@@ -481,13 +496,13 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
 
         $this->eventRepository = $this->api->factory(EventRepository::class);
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->configurationManager = $objectManager->get('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManager');
+        $this->configurationManager = $objectManager->get(ConfigurationManager::class);
 
         $this->settings = $config['plugin']['tx_nkcevent_main']['settings'];
 
         $this->settings['flexform'] = $this->settings['flexformDefault'];
 
-        $query = new \Nordkirche\Ndk\Domain\Query\EventQuery();
+        $query = new EventQuery();
 
         $query->setInclude([Event::RELATION_ADDRESS, Event::RELATION_CHIEF_ORGANIZER, Event::RELATION_CATEGORY]);
 
@@ -516,7 +531,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
     }
 
     /**
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
+     * @throws StopActionException
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
      */
     public function redirectAction()
@@ -541,8 +556,8 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
         $filter['dates'] = $this->filterDateRepository->findDatesByStoragePid($this->settings['filter']['pidDateFilter'])->toArray();
 
         foreach ($this->settings['relativeFilterDates'] as $filterDateData) {
-            /** @var \Nordkirche\NkcEvent\Domain\Model\FilterDate $filterDate */
-            $filterDate = GeneralUtility::makeInstance(\Nordkirche\NkcEvent\Domain\Model\FilterDate::class);
+            /** @var FilterDate $filterDate */
+            $filterDate = GeneralUtility::makeInstance(FilterDate::class);
             $filterDate->setName(LocalizationUtility::translate($filterDateData['label'], 'NkcEvent'));
             $filterDate->setDateFrom(new \DateTime());
             $filterDate->setDateTo(new \DateTime(date('d.m.Y H:i', time() + $filterDateData['time'])));
@@ -561,12 +576,12 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
                     $filter['cities'][$index] = [];
                     $filter['cities'][$index]['name'] = $city;
 
-                    /** @var \Nordkirche\Ndk\Domain\Model\Institution\Institution $institution */
+                    /** @var Institution $institution */
                     if ($institutionCollection && $institutionCollection->getRecordCount() > 0) {
                         foreach ($institutionCollection as $institution) {
-                            /** @var \Nordkirche\Ndk\Domain\Model\Address $address */
+                            /** @var Address $address */
                             $address = $institution->getAddress();
-                            if (($address instanceof \Nordkirche\Ndk\Domain\Model\Address) && ($address->getCity() == $city)) {
+                            if (($address instanceof Address) && ($address->getCity() == $city)) {
                                 $filter['cities'][$index]['locations'][] = [
                                     'name'  => $institution->getOfficialName() ?: $institution->getName(),
                                     'id'    => $institution->getId()
@@ -583,7 +598,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
             $categories = GeneralUtility::trimExplode(',', $this->settings['filter']['categoryCollection']);
             foreach ($categories as $categoryUid) {
                 $category = $this->categoryRepository->findByUid($categoryUid);
-                if ($category instanceof \TYPO3\CMS\Extbase\Domain\Model\Category) {
+                if ($category instanceof Category) {
                     $filter['categories'][] = [
                                                 'uid'   => $category->getUid(),
                                                 'label' => $category->getTitle()
@@ -597,7 +612,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
 
     /**
      * @param $institutionCollection
-     * @return bool|\Nordkirche\Ndk\Service\Result
+     * @return bool|Result
      */
     private function getFilterInstitutions($institutionCollection)
     {
@@ -613,7 +628,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
             }
 
             if (count($idList)) {
-                $query = new \Nordkirche\Ndk\Domain\Query\InstitutionQuery();
+                $query = new InstitutionQuery();
                 $query->setPageSize(99);
                 $query->setInstitutions($idList);
                 $query->setInclude([Institution::RELATION_ADDRESS]);
@@ -628,17 +643,18 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
         return $institutions;
     }
 
-    public function searchFormAction()
+    public function searchFormAction(): ResponseInterface
     {
         $this->view->assignMultiple([
             'searchPid' => $this->settings['flexform']['pidList'] ? $this->settings['flexform']['pidList'] : $GLOBALS['TSFE']->id,
             'filter' => $this->getFilterValues()
         ]);
+        return $this->htmlResponse();
     }
 
     /**
-     * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
+     * @param SearchRequest $searchRequest
+     * @throws StopActionException
      */
     public function searchAction($searchRequest = null)
     {
@@ -661,10 +677,10 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
     }
 
     /**
-     * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
+     * @param SearchRequest $searchRequest
      * @param int $forceReload
      */
-    public function dataAction($searchRequest = null, $forceReload = 0)
+    public function dataAction($searchRequest = null, $forceReload = 0): ResponseInterface
     {
 
         $this->view->setVariablesToRender(['json']);
@@ -672,7 +688,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
         // Get current cObj
         $cObj = $this->configurationManager->getContentObject();
 
-        $query = new \Nordkirche\Ndk\Domain\Query\EventQuery();
+        $query = new EventQuery();
 
         $query->setPageSize(50);
 
@@ -687,7 +703,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
             $query->setTimeFromStart(new \DateTime(date('Y-m-d')));
         }
 
-        $cacheInstance = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class)->getCache('tx_nkgooglemaps');
+        $cacheInstance = GeneralUtility::makeInstance(CacheManager::class)->getCache('tx_nkgooglemaps');
 
         $mapMarkerJson = $cacheInstance->get($this->getCacheKey($cObj, $searchRequest));
 
@@ -714,6 +730,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
         }
 
         $this->view->assignMultiple(['json' => json_decode($mapMarkerJson, TRUE)]);
+        return $this->htmlResponse();
     }
 
     /**
@@ -737,16 +754,16 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
     }
 
     /**
-     * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
+     * @param SearchRequest $searchRequest
      * @param int $page
      * @param string $requestId
      * @return string
      */
-    public function paginatedDataAction($searchRequest = NULL, $page = 1, $requestId = '')
+    public function paginatedDataAction($searchRequest = NULL, $page = 1, $requestId = ''): ResponseInterface
     {
 
         if (!trim($requestId)) {
-            return '[]';
+            return $this->htmlResponse('[]');
         }
 
         $result = [];
@@ -759,8 +776,8 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
         // Get current cObj
         $cObj = $this->configurationManager->getContentObject();
 
-        /** @var \Nordkirche\Ndk\Domain\Query\EventQuery $query */
-        $query = new \Nordkirche\Ndk\Domain\Query\EventQuery();
+        /** @var EventQuery $query */
+        $query = new EventQuery();
 
         $query->setInclude([Event::RELATION_ADDRESS, Event::RELATION_CATEGORY]);
 
@@ -775,7 +792,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
             $query->setTimeFromStart(new \DateTime(date('Y-m-d')));
         }
 
-        $cacheInstance = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class)->getCache('tx_nkgooglemaps');
+        $cacheInstance = GeneralUtility::makeInstance(CacheManager::class)->getCache('tx_nkgooglemaps');
 
         $mapMarkerJson = $cacheInstance->get($this->getCacheKey($cObj, $searchRequest));
 
@@ -828,6 +845,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
                 $this->view->assign('json', ['data' => $mapMarkers]);
             }
         }
+        return $this->htmlResponse();
     }
 
     /**
@@ -836,7 +854,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
      * @param $numPages
      */
     private function cacheCleanGarbage($cacheKey, $requestId, $numPages) {
-        $cacheInstance = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class)->getCache('tx_nkgooglemaps');
+        $cacheInstance = GeneralUtility::makeInstance(CacheManager::class)->getCache('tx_nkgooglemaps');
         $markerArray = [];
         for($page=1; $page <= $numPages; $page++) {
             $mapMarkerJson = $cacheInstance->get($cacheKey.'-'.$requestId.'-'.$page);
@@ -865,7 +883,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
         $cObj = new \StdClass();
         $cObj->data = $content;
 
-        $cacheInstance = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class)->getCache('tx_nkgooglemaps');
+        $cacheInstance = GeneralUtility::makeInstance(CacheManager::class)->getCache('tx_nkgooglemaps');
 
         $mapMarkerJson = $cacheInstance->get($this->getCacheKey($cObj, false));
 
@@ -888,7 +906,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
             $this->settings['eventIconName'] = $tsConfig['plugin']['tx_nkcevent_main']['settings']['eventIconName'];
             $this->settings['mapping'] = $tsConfig['plugin']['tx_nkcevent_main']['settings']['mapping'];
 
-            $query = new \Nordkirche\Ndk\Domain\Query\EventQuery();
+            $query = new EventQuery();
 
             $includes = [Event::RELATION_CATEGORY, Event::RELATION_ADDRESS];
 
@@ -908,7 +926,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
     /**
      * @param int $uid
      */
-    public function showAction($uid = null)
+    public function showAction($uid = null): ResponseInterface
     {
         $includes = [Event::RELATION_CHIEF_ORGANIZER, Event::RELATION_CATEGORY, Event::RELATION_ADDRESS];
 
@@ -943,6 +961,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
             'mapMarker' => $mapMarker,
             'content' => $cObj->data
         ]);
+        return $this->htmlResponse();
     }
 
     /**
@@ -965,14 +984,15 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
     /**
      * @param int $uid
      */
-    public function exportAction($uid)
+    public function exportAction($uid): ResponseInterface
     {
         // Find by uid
         $event = $this->eventRepository->getById($uid);
 
-        if ($event instanceof \Nordkirche\Ndk\Domain\Model\Event\Event) {
+        if ($event instanceof Event) {
             ExportService::renderCalendar([$event]);
         }
+        return $this->htmlResponse();
     }
 
     /**
@@ -989,5 +1009,15 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
                 $query->setChiefOrganizer($filter);
             }
         }
+    }
+
+    public function injectFilterDateRepository(FilterDateRepository $filterDateRepository): void
+    {
+        $this->filterDateRepository = $filterDateRepository;
+    }
+
+    public function injectCategoryRepository(CategoryRepository $categoryRepository): void
+    {
+        $this->categoryRepository = $categoryRepository;
     }
 }
