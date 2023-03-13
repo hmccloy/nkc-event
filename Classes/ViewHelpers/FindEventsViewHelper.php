@@ -2,9 +2,14 @@
 
 namespace  Nordkirche\NkcEvent\ViewHelpers;
 
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
+use Nordkirche\NkcBase\Exception\ApiException;
+use Nordkirche\NkcBase\Service\ApiService;
+use Nordkirche\Ndk\Domain\Query\EventQuery;
 use Nordkirche\Ndk\Domain\Repository\EventRepository;
 
-class FindEventsViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
+class FindEventsViewHelper extends AbstractViewHelper
 {
 
     /**
@@ -15,7 +20,7 @@ class FindEventsViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractVie
     /**
      * Initialize arguments.
      *
-     * @throws \TYPO3Fluid\Fluid\Core\ViewHelper\Exception
+     * @throws Exception
      */
     public function initializeArguments()
     {
@@ -27,13 +32,13 @@ class FindEventsViewHelper extends \TYPO3Fluid\Fluid\Core\ViewHelper\AbstractVie
 
     /**
      * @return string
-     * @throws \Nordkirche\NkcBase\Exception\ApiException
+     * @throws ApiException
      */
     public function render()
     {
-        $api = \Nordkirche\NkcBase\Service\ApiService::get();
+        $api = ApiService::get();
         $eventRepository = $api->factory(EventRepository::class);
-        $query = new \Nordkirche\Ndk\Domain\Query\EventQuery();
+        $query = new EventQuery();
 
         if ($this->arguments['institution']) {
             $query->setOrganizers([$this->arguments['institution']]);

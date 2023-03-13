@@ -1,6 +1,6 @@
 <?php
 
-defined('TYPO3_MODE') || die('Access denied.');
+defined('TYPO3') || die('Access denied.');
 
 call_user_func(
     function () {
@@ -9,26 +9,26 @@ call_user_func(
         $GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters'][] = 'tx_nkcevent_main[page]';
 
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-            'Nordkirche.NkcEvent',
+            'NkcEvent',
             'Main',
             [
-                'Event' => 'list, search, searchForm, show, export, data, paginatedData, redirect'
+                \Nordkirche\NkcEvent\Controller\EventController::class => 'list, search, searchForm, show, export, data, paginatedData, redirect'
             ],
             // non-cacheable actions
             [
-                'Event' => 'export, search, paginatedData, redirect'
+                \Nordkirche\NkcEvent\Controller\EventController::class => 'export, search, paginatedData, redirect'
             ]
         );
 
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-            'Nordkirche.NkcEvent',
+            'NkcEvent',
             'Map',
             [
-                'Map' => 'show,list,data,paginatedData',
+                \Nordkirche\NkcEvent\Controller\MapController::class => 'show,list,data,paginatedData',
             ],
             // non-cacheable actions
             [
-                'Map' => 'paginatedData'
+                \Nordkirche\NkcEvent\Controller\MapController::class => 'paginatedData'
             ]
         );
 

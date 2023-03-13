@@ -8,6 +8,12 @@ namespace Nordkirche\NkcEvent\Hook;
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  */
+use TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Backend\View\PageLayoutView;
+use Nordkirche\NkcBase\Exception\ApiException;
+use TYPO3\CMS\Extbase\Object\Exception;
+use Nordkirche\Ndk\Domain\Query\EventQuery;
 use Nordkirche\Ndk\Api;
 use Nordkirche\Ndk\Domain\Model\Event\Event;
 use Nordkirche\Ndk\Domain\Repository\EventRepository;
@@ -22,7 +28,7 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 /**
  * Hook to display verbose information about the plugin
  */
-class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInterface
+class CmsLayout implements PageLayoutViewDrawItemHookInterface
 {
     const LLPATH = 'LLL:EXT:nkc_event/Resources/Private/Language/locallang.xlf:';
     const LLPATH_DB = 'LLL:EXT:nkc_event/Resources/Private/Language/locallang_db.xlf:';
@@ -33,7 +39,7 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
     protected $api;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Object\ObjectManager
+     * @var ObjectManager
      */
     protected $objectManager;
 
@@ -45,20 +51,20 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
     /**
      * Preprocesses the preview rendering of a content element.
      *
-     * @param \TYPO3\CMS\Backend\View\PageLayoutView $parentObject Calling parent object
+     * @param PageLayoutView $parentObject Calling parent object
      * @param bool $drawItem Whether to draw the item using the default functionalities
      * @param string $headerContent Header content
      * @param string $itemContent Item content
      * @param array $row Record row of tt_content
-     * @throws \Nordkirche\NkcBase\Exception\ApiException
-     * @throws \TYPO3\CMS\Extbase\Object\Exception
+     * @throws ApiException
+     * @throws Exception
      */
-    public function preProcess(\TYPO3\CMS\Backend\View\PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row)
+    public function preProcess(PageLayoutView &$parentObject, &$drawItem, &$headerContent, &$itemContent, array &$row)
     {
         if ($row['list_type'] == 'nkcevent_main') {
             $this->api = ApiService::get();
 
-            $this->flexformData = \TYPO3\CMS\Core\Utility\GeneralUtility::xml2array($row['pi_flexform']);
+            $this->flexformData = GeneralUtility::xml2array($row['pi_flexform']);
 
             $drawItem = false;
 
@@ -78,7 +84,7 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
 
             $content .= '<p>Layout: ' . ($layoutKey ? $layoutKey : 'Default') . '</p>';
 
-            $this->objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
+            $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
             if ($action == 'show') {
                 $content .= $this->renderEventSingleView();
@@ -94,9 +100,9 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
         } elseif ($row['list_type'] == 'nkcevent_map') {
             $this->api = ApiService::get();
 
-            $this->flexformData = \TYPO3\CMS\Core\Utility\GeneralUtility::xml2array($row['pi_flexform']);
+            $this->flexformData = GeneralUtility::xml2array($row['pi_flexform']);
 
-            $this->objectManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Object\ObjectManager::class);
+            $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 
             $drawItem = false;
 
@@ -108,7 +114,7 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
 
     /**
      * @return string
-     * @throws \TYPO3\CMS\Extbase\Object\Exception
+     * @throws Exception
      */
     private function renderMapView()
     {
@@ -132,7 +138,7 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
         $mapController = $this->objectManager->get(MapController::class);
         $mapController->initializeAction();
 
-        $query = new \Nordkirche\Ndk\Domain\Query\EventQuery();
+        $query = new EventQuery();
 
         list($limit, $mapItems) = $mapController->getMapItems($query, $settings);
 
@@ -185,7 +191,7 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
 
     /**
      * @return string
-     * @throws \TYPO3\CMS\Extbase\Object\Exception
+     * @throws Exception
      */
     private function renderEventListView()
     {
@@ -195,7 +201,7 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
         /** @var EventController $eventController */
         $eventController = GeneralUtility::makeInstance(EventController::class);
 
-        $query = $this->api->factory(\Nordkirche\Ndk\Domain\Query\EventQuery::class);
+        $query = $this->api->factory(EventQuery::class);
 
         // Set pagination parameters
         $query->setPageSize(10);
@@ -282,7 +288,7 @@ class CmsLayout implements \TYPO3\CMS\Backend\View\PageLayoutViewDrawItemHookInt
         if (isset($flexform['data'])) {
             $flexform = $flexform['data'];
             if (is_array($flexform) && is_array($flexform[$sheet]) && is_array($flexform[$sheet]['lDEF'])
-                && is_array($flexform[$sheet]['lDEF'][$key]) && isset($flexform[$sheet]['lDEF'][$key]['vDEF'])
+                && isset($flexform[$sheet]['lDEF'][$key]) && is_array($flexform[$sheet]['lDEF'][$key]) && isset($flexform[$sheet]['lDEF'][$key]['vDEF'])
             ) {
                 return $flexform[$sheet]['lDEF'][$key]['vDEF'];
             }

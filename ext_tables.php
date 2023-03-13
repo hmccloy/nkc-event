@@ -1,11 +1,11 @@
 <?php
 
-defined('TYPO3_MODE') || die('Access denied.');
+defined('TYPO3') || die('Access denied.');
 
 call_user_func(
     function () {
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-            'Nordkirche.NkcEvent',
+            'NkcEvent',
             'Main',
             'Veranstaltungen'
         );
@@ -15,7 +15,7 @@ call_user_func(
         \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue($pluginSignature, 'FILE:EXT:nkc_event/Configuration/FlexForms/flexform_main.xml');
 
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-            'Nordkirche.NkcEvent',
+            'NkcEvent',
             'Map',
             'Karte mit Veranstaltungen darstellen'
         );
