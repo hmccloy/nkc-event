@@ -178,7 +178,8 @@ class EventController extends BaseController
             'filter' => ($GLOBALS['TSFE']->type === 0) ? $this->getFilterValues() : [],
             'mapMarkers' => $mapMarkers,
             'requestUri' => $requestUri,
-            'organizer' => $organizer
+            'organizer' => $organizer,
+            'pagination' => $this->getPagination($events, $currentPage)
         ]);
         return $this->htmlResponse();
     }

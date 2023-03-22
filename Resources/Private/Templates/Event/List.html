@@ -41,11 +41,10 @@
 
                         <f:if condition="{settings.flexform.paginate.mode} > 1">
                             <f:then>
-                                <n:paginate objects="{events}" as="paginatedEvents" configuration="{settings.flexform.paginate}">
-                                    <f:for each="{paginatedEvents}" as="event">
-                                        <f:render partial="Event/Teaser" arguments="{event: event}"/>
-                                    </f:for>
-                                </n:paginate>
+								<f:for each="{paginatedEvents}" as="event">
+									<f:render partial="Event/Teaser" arguments="{event: event}"/>
+								</f:for>
+								<f:render partial="Pagination" arguments="{_all}"></f:render>
                             </f:then>
                             <f:else>
                                 <div class="ajax-list-wrapper">
