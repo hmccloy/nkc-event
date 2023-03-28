@@ -19,7 +19,6 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\View\StandaloneView;
-use TYPO3\CMS\Form\Domain\Model\FormElements\Date;
 
 class EventController extends \Nordkirche\NkcBase\Controller\BaseController
 {
@@ -366,16 +365,23 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
         $mappingType = ($event->getEventType() ? $event->getEventType() : 'default');
         $type = 'event-' . $mappingType;
         $address = $event->getAddress();
+
         $digitalEvent = false;
+        $hybridEvent = false;
 
         foreach ($event->getCategories() as $category) {
-            if ((int)($category->getId()) == (int)($this->settings['digitalEventCategoryId'])) {
+            if (in_array(intval($category->getId()), GeneralUtility::intExplode(',', $this->settings['hybridEventCategoryId']))) {
+                $hybridEvent = true;
+            }
+            if (in_array(intval($category->getId()), GeneralUtility::intExplode(',', $this->settings['digitalEventCategoryId']))) {
                 $digitalEvent = true;
-                break;
             }
         }
 
-        if ($digitalEvent) {
+        if ($hybridEvent) {
+            $type = 'hybrid-' . $type;
+            $mappingType = 'hybrid-' . $mappingType;
+        } elseif ($digitalEvent) {
             $type = 'digital-' . $type;
             $mappingType = 'digital-' . $mappingType;
         }
@@ -387,7 +393,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
 
                     'lat' 	=> $address->getLatitude(),
                     'lon' 	=> $address->getLongitude(),
-                    'info' 	=> $asyncInfo ? '' : $this->renderMapInfo($event, ['digitalEvent' => $digitalEvent]),
+                    'info' 	=> $asyncInfo ? '' : $this->renderMapInfo($event, ['digitalEvent' => $digitalEvent, 'hybridEvent' => $hybridEvent]),
                     'type'  => $type,
                     'object' => 'e',
                     'id'    => $event->getId(),
@@ -458,8 +464,8 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
         }
 
         $this->standaloneView->assignMultiple(['event' 	    => $event,
-                                                    'addConfig'     => $addConfig,
-                                                    'settings'	    => $this->settings]);
+                                                'addConfig'     => $addConfig,
+                                                'settings'	    => $this->settings]);
 
         return $this->standaloneView->render();
     }
@@ -493,13 +499,17 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
 
         foreach($events  as $event) {
             $digitalEvent = false;
+            $hybridEvent = false;
+
             foreach($event->getCategories() as $category) {
-                if (intval($category->getId()) == intval($this->settings['digitalEventCategoryId'])) {
+                if (in_array((int)($category->getId()), GeneralUtility::intExplode(',', $this->settings['hybridEventCategoryId']))) {
+                    $hybridEvent = true;
+                }
+                if (in_array((int)($category->getId()), GeneralUtility::intExplode(',', $this->settings['digitalEventCategoryId']))) {
                     $digitalEvent = true;
-                    break;
                 }
             }
-            $result .= $this->renderMapInfo($event, ['digitalEvent' => $digitalEvent], 'Event/AsyncMapInfo');
+            $result .= $this->renderMapInfo($event, ['digitalEvent' => $digitalEvent, 'hybridEvent' => $hybridEvent], 'Event/AsyncMapInfo');
         }
 
         return $result;
@@ -598,7 +608,7 @@ class EventController extends \Nordkirche\NkcBase\Controller\BaseController
 
             foreach (GeneralUtility::trimExplode(',', $institutionCollection) as $url) {
                 $urlParts = parse_url($url);
-                list($type, $id) = $napiService::parseResourceUrl($urlParts);
+                [$type, $id] = $napiService::parseResourceUrl($urlParts);
                 $idList[] = $id;
             }
 
