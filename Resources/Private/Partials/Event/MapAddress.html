@@ -1,0 +1,26 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers"
+	  xmlns:n="http://typo3.org/ns/Nordkirche/NkcBase/ViewHelpers"
+	  data-namespace-typo3-fluid="true">
+
+	<f:if condition="{addConfig.hybridEvent}">
+		<f:then>
+			<f:if condition="{event.externalLink}">
+				<p>{event.externalLink -> n:makeClickable()}</p>
+			</f:if>
+			<f:render partial="Event/Address" arguments="{address: event.address}" />
+		</f:then>
+		<f:else>
+			<f:if condition="{addConfig.digitalEvent}">
+				<f:then>
+					<f:if condition="{event.externalLink}">
+						{event.externalLink -> n:makeClickable()}
+					</f:if>
+				</f:then>
+				<f:else>
+					<f:render partial="Event/Address" arguments="{address: event.address}" />
+				</f:else>
+			</f:if>
+		</f:else>
+	</f:if>
+
+</html>
