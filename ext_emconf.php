@@ -10,7 +10,7 @@
  * "version" and "dependencies" must not be touched!
  ***************************************************************/
 
-$EM_CONF[$_EXTKEY] = [
+$EM_CONF['nkc_event'] = [
     'title' => 'Nordkirche Veranstaltungs Client',
     'description' => 'TYPO3 Extension zur Darstellung von Veranstaltungen aus der NAPI',
     'category' => 'plugin',
