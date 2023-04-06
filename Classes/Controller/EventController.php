@@ -94,6 +94,8 @@ class EventController extends BaseController
      */
     public function listAction($currentPage = 1, $searchRequest = null): ResponseInterface
     {
+        $requestUri = '';
+
         $query = new EventQuery();
 
         $query->setInclude([Event::RELATION_ADDRESS, Event::RELATION_CHIEF_ORGANIZER, Event::RELATION_CATEGORY]);
@@ -133,7 +135,6 @@ class EventController extends BaseController
             } else {
                 $mapMarkers = [];
             }
-            $requestUri = '';
         } else {
             $mapMarkers = [];
 
@@ -156,7 +157,6 @@ class EventController extends BaseController
                 $this->uriBuilder->reset()
                     ->setTargetPageUid($GLOBALS['TSFE']->id)
                     ->setTargetPageType($this->settings['ajaxTypeNum'])
-                    ->setUseCacheHash(false)
                     ->setArguments([
                         'tx_nkcevent_main' => [
                             'action' => 'paginatedData',
@@ -193,17 +193,17 @@ class EventController extends BaseController
     {
 
         // Filter by organizer
-        $this->setOrganizersFilter($query, $flexform['institutionCollection']);
+        $this->setOrganizersFilter($query, !empty($flexform['institutionCollection']) ? $flexform['institutionCollection'] : null);
 
         // Filter by target group
-        $this->setTargetGroupFilter($query, $flexform['targetGroupCollection']);
+        $this->setTargetGroupFilter($query, !empty($flexform['targetGroupCollection']) ? $flexform['targetGroupCollection'] : null);
 
-        if ($flexform['eventTypes']) {
+        if (!empty($flexform['eventTypes'])) {
             $eventTypes = GeneralUtility::trimExplode(',', $flexform['eventTypes']);
             $query->setEventType($eventTypes[0]);
         }
 
-        if ($flexform['eventLocation']) {
+        if (!empty($flexform['eventLocation'])) {
 
             if ($this->napiService === null) {
                 $this->api = ApiService::get();
@@ -216,7 +216,7 @@ class EventController extends BaseController
             }
         }
 
-        if ($flexform['categories']) {
+        if (!empty($flexform['categories'])) {
             $categories = GeneralUtility::trimExplode(',', $flexform['categories']);
             if ($flexform['categoryOperator'] == QueryInterface::OPERATOR_AND) {
                 $query->setCategoriesAnd($categories);
@@ -225,15 +225,15 @@ class EventController extends BaseController
             }
         }
 
-        if ($flexform['dateFrom']) {
+        if (!empty($flexform['dateFrom'])) {
             $query->setTimeFrom(new \DateTime(date('d.m.Y', $flexform['dateFrom'])));
         }
 
-        if ($flexform['dateTo']) {
+        if (!empty($flexform['dateTo'])) {
             $query->setTimeTo(new \DateTime(date('d.m.Y', $flexform['dateTo'])));
         }
 
-        if (intval($flexform['numDays']) > 1) {
+        if (!empty($flexform['numDays']) && (intval($flexform['numDays']) > 1)) {
             try {
                 $date = new \DateTime();
                 $interval = new \DateInterval('P' . intval($flexform['numDays']). 'D');
@@ -244,7 +244,7 @@ class EventController extends BaseController
             }
         }
 
-        if ($flexform['geosearch']) {
+        if (!empty($flexform['geosearch'])) {
             $geocode = new Geocode($flexform['latitude'], $flexform['longitude'], $flexform['radius']);
             $query->setGeocode($geocode);
         }
@@ -413,7 +413,7 @@ class EventController extends BaseController
                     'type'  => $type,
                     'object' => 'e',
                     'id'    => $event->getId(),
-                    'icon' 	=> sprintf($this->settings['eventIconName'], $this->settings['mapping']['eventIcon'][$mappingType] ? $this->settings['mapping']['eventIcon'][$mappingType] : 'gemeindeleben')
+                    'icon' 	=> sprintf(!empty($this->settings['eventIconName']) ? $this->settings['eventIconName'] : '%s', !empty($this->settings['mapping']['eventIcon'][$mappingType]) ? $this->settings['mapping']['eventIcon'][$mappingType] : 'gemeindeleben')
 
                 ];
                 $mapMarkers[] = $marker;
@@ -435,7 +435,7 @@ class EventController extends BaseController
             $config= $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
 
             $absTemplatePaths = [];
-            if (is_array($config['view']['templateRootPaths'])) {
+            if (!empty($config['view']['templateRootPaths']) && is_array($config['view']['templateRootPaths'])) {
                 foreach ($config['view']['templateRootPaths'] as $path) {
                     $absTemplatePaths[] = GeneralUtility::getFileAbsFileName($path);
                 }
@@ -445,7 +445,7 @@ class EventController extends BaseController
             }
 
             $absLayoutPaths = [];
-            if (is_array($config['view']['layoutRootPaths'])) {
+            if (!empty($config['view']['layoutRootPaths']) && is_array($config['view']['layoutRootPaths'])) {
                 foreach ($config['view']['layoutRootPaths'] as $path) {
                     $absLayoutPaths[] = GeneralUtility::getFileAbsFileName($path);
                 }
@@ -455,7 +455,7 @@ class EventController extends BaseController
             }
 
             $absPartialPaths = [];
-            if (is_array($config['view']['partialRootPaths'])) {
+            if (!empty($config['view']['partialRootPaths']) && is_array($config['view']['partialRootPaths'])) {
                 foreach ($config['view']['partialRootPaths'] as $path) {
                     $absPartialPaths[] = GeneralUtility::getFileAbsFileName($path);
                 }
