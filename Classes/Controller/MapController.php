@@ -120,7 +120,7 @@ class MapController extends BaseController
                                      'query'    => $query,
                                      'content'  => $cObj->data]);
 
-        if ($this->settings['flexform']['showFilter'] == 1) {
+        if (!empty($this->settings['flexform']['showFilter']) &&  ($this->settings['flexform']['showFilter'] == 1)) {
             $this->view->assign('facets', $this->getFacets());
         }
     }
@@ -291,16 +291,16 @@ class MapController extends BaseController
         $mapItems = [];
 
         // Selected Events
-        if ($settings['flexform']['eventCollection']) {
+        if (!empty($settings['flexform']['eventCollection'])) {
             $query->setEvents(GeneralUtility::trimExplode(',', $settings['flexform']['eventCollection']));
         }
         // Filter by organizer
-        if ($settings['flexform']['institutionCollection']) {
+        if (!empty($settings['flexform']['institutionCollection'])) {
             $query->setOrganizers(GeneralUtility::trimExplode(',', $settings['flexform']['institutionCollection']));
         }
 
         // Categories
-        if ($settings['flexform']['categories']) {
+        if (!empty($settings['flexform']['categories'])) {
             $categories = GeneralUtility::trimExplode(',', $settings['flexform']['categories']);
             if ($settings['flexform']['selectCategoryOption'] == QueryInterface::OPERATOR_AND) {
                 $query->setCategoriesAnd($categories);
@@ -311,17 +311,17 @@ class MapController extends BaseController
         }
 
         // Cities
-        if ($settings['flexform']['cities']) {
+        if (!empty($settings['flexform']['cities'])) {
             $query->setCities(GeneralUtility::trimExplode(',', $settings['flexform']['cities']));
         }
 
         // zipCodes
-        if ($settings['flexform']['zipCodes']) {
+        if (!empty($settings['flexform']['zipCodes'])) {
             $query->setZipCodes(GeneralUtility::trimExplode(',', $settings['flexform']['zipCodes']));
         }
 
         // dateFrom
-        if ($settings['flexform']['dateFrom']) {
+        if (!empty($settings['flexform']['dateFrom'])) {
             $dateFrom = new \DateTime(date('d.m.Y', $settings['flexform']['dateFrom']));
             $query->setTimeFromStart($dateFrom);
         } else {
@@ -329,13 +329,13 @@ class MapController extends BaseController
         }
 
         // dateTo
-        if ($settings['flexform']['dateTo']) {
+        if (!empty($settings['flexform']['dateTo'])) {
             $dateTo = new \DateTime(date('d.m.Y', $settings['flexform']['dateTo']));
             $query->setTimeToEnd($dateTo);
         }
 
         // num days
-        if ((int)$settings['flexform']['numDays'] > 0) {
+        if (!empty($settings['flexform']['numDays']) && ((int)$settings['flexform']['numDays'] > 0)) {
             $dateTo = new \DateTime(date('d.m.Y', time() + ((int)$settings['flexform']['numDays'] * 86400)));
             $query->setTimeToEnd($dateTo);
         }
