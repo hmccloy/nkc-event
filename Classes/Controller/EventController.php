@@ -533,7 +533,6 @@ class EventController extends BaseController
 
     /**
      * @throws StopActionException
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
      */
     public function redirectAction()
     {
@@ -554,7 +553,7 @@ class EventController extends BaseController
     {
         $filter = [];
 
-        $filter['dates'] = $this->filterDateRepository->findDatesByStoragePid($this->settings['filter']['pidDateFilter'])->toArray();
+        $filter['dates'] = $this->filterDateRepository->findDatesByStoragePid(!empty($this->settings['filter']['pidDateFilter']) ? $this->settings['filter']['pidDateFilter'] : 0)->toArray();
 
         foreach ($this->settings['relativeFilterDates'] as $filterDateData) {
             /** @var FilterDate $filterDate */
@@ -565,7 +564,7 @@ class EventController extends BaseController
             $filter['dates'][] = $filterDate;
         }
 
-        if ($this->settings['filter']['cityCollection']) {
+        if (!empty($this->settings['filter']['cityCollection'])) {
             $cities = GeneralUtility::trimExplode(',', $this->settings['filter']['cityCollection']);
 
             $index = 0;
@@ -595,7 +594,7 @@ class EventController extends BaseController
             }
         }
 
-        if ($this->settings['filter']['categoryCollection']) {
+        if (!empty($this->settings['filter']['categoryCollection'])) {
             $categories = GeneralUtility::trimExplode(',', $this->settings['filter']['categoryCollection']);
             foreach ($categories as $categoryUid) {
                 $category = $this->categoryRepository->findByUid($categoryUid);
@@ -617,7 +616,7 @@ class EventController extends BaseController
      */
     private function getFilterInstitutions($institutionCollection)
     {
-        if ($this->settings['filter']['institutionCollection']) {
+        if (!empty($this->settings['filter']['institutionCollection'])) {
             $napiService = $this->api->factory()->get(NapiService::class);
 
             $idList = [];
@@ -647,7 +646,7 @@ class EventController extends BaseController
     public function searchFormAction(): ResponseInterface
     {
         $this->view->assignMultiple([
-            'searchPid' => $this->settings['flexform']['pidList'] ? $this->settings['flexform']['pidList'] : $GLOBALS['TSFE']->id,
+            'searchPid' => !empty($this->settings['flexform']['pidList']) ? $this->settings['flexform']['pidList'] : $GLOBALS['TSFE']->id,
             'filter' => $this->getFilterValues()
         ]);
         return $this->htmlResponse();
@@ -931,7 +930,7 @@ class EventController extends BaseController
     {
         $includes = [Event::RELATION_CHIEF_ORGANIZER, Event::RELATION_CATEGORY, Event::RELATION_ADDRESS];
 
-        if ($this->settings['flexform']['singleEvent']) {
+        if (!empty($this->settings['flexform']['singleEvent'])) {
             // Event is selected in flexform
             try {
                 $event = $this->napiService->resolveUrl($this->settings['flexform']['singleEvent'], $includes);
