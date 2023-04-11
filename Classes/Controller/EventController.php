@@ -138,7 +138,7 @@ class EventController extends BaseController
         } else {
             $mapMarkers = [];
 
-            if (!$this->settings['flexform']['stream']) {
+            if (empty($this->settings['flexform']['stream'])) {
 
                 $this->uriBuilder->reset()
                     ->setTargetPageUid($GLOBALS['TSFE']->id)
