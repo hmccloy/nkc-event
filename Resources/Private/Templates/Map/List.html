@@ -27,7 +27,7 @@
             <div class="container">
                 <f:if condition="{settings.flexform.paginate.mode} > 1">
                     <f:then>
-						<f:for each="{paginatedEvents}" as="event">
+						<f:for each="{events}" as="event">
 							<f:render partial="Event/Teaser" arguments="{event: event}"/>
 						</f:for>
 						<f:render partial="Pagination" arguments="{_all}"></f:render>
