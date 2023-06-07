@@ -3,6 +3,7 @@
 namespace Nordkirche\NkcEvent\Controller;
 
 use Nordkirche\NkcBase\Controller\BaseController;
+use Nordkirche\NkcEvent\Domain\Dto\SearchRequest;
 use Nordkirche\NkcEvent\Domain\Repository\FilterDateRepository;
 use TYPO3\CMS\Extbase\Domain\Repository\CategoryRepository;
 use Nordkirche\NkcBase\Exception\ApiException;
@@ -26,7 +27,6 @@ use Nordkirche\Ndk\Domain\Repository\PersonRepository;
 use Nordkirche\Ndk\Service\Interfaces\QueryInterface;
 use Nordkirche\Ndk\Service\NapiService;
 use Nordkirche\NkcBase\Service\ApiService;
-use Nordkirche\NkcEvent\Domain\Dto\SearchRequest;
 use Nordkirche\NkcEvent\Service\ExportService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -89,7 +89,7 @@ class EventController extends BaseController
 
     /**
      * @param int $currentPage
-     * @param SearchRequest $searchRequest
+     * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
      * @throws ApiException
      */
     public function listAction($currentPage = 1, $searchRequest = null): ResponseInterface
@@ -277,7 +277,7 @@ class EventController extends BaseController
 
     /**
      * @param EventQuery $query
-     * @param SearchRequest $searchRequest
+     * @param \Nordkirche\NkcEvent\Domain\Dto\ $searchRequest
      */
     private function setUserFilters($query, $searchRequest)
     {
@@ -653,7 +653,7 @@ class EventController extends BaseController
     }
 
     /**
-     * @param SearchRequest $searchRequest
+     * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
      * @throws StopActionException
      */
     public function searchAction($searchRequest = null)
@@ -677,7 +677,7 @@ class EventController extends BaseController
     }
 
     /**
-     * @param SearchRequest $searchRequest
+     * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
      * @param int $forceReload
      */
     public function dataAction($searchRequest = null, $forceReload = 0): ResponseInterface
@@ -754,7 +754,7 @@ class EventController extends BaseController
     }
 
     /**
-     * @param SearchRequest $searchRequest
+     * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
      * @param int $page
      * @param string $requestId
      * @return string
