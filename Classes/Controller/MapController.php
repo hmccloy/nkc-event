@@ -2,6 +2,9 @@
 
 namespace Nordkirche\NkcEvent\Controller;
 
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Cache\CacheManager;
+use Nordkirche\Ndk\Service\Result;
 use Nordkirche\Ndk\Domain\Model\Event\Event;
 use Nordkirche\Ndk\Domain\Query\EventQuery;
 use Nordkirche\Ndk\Domain\Repository\EventRepository;
@@ -17,18 +20,17 @@ class MapController extends BaseController
 {
 
     /**
-     * @var \Nordkirche\Ndk\Domain\Repository\EventRepository
+     * @var EventRepository
      */
     protected $eventRepository;
 
     /**
-     * @var \Nordkirche\NkcEvent\Controller\EventController
-     * @TYPO3\CMS\Extbase\Annotation\Inject
+     * @var EventController
      */
     protected $eventController;
 
     /**
-     * @var \Nordkirche\Ndk\Service\NapiService
+     * @var NapiService
      */
     protected $napiService;
 
@@ -55,9 +57,10 @@ class MapController extends BaseController
     /**
      * Show map action
      */
-    public function showAction()
+    public function showAction(): ResponseInterface
     {
         $this->createView();
+        return $this->htmlResponse();
     }
 
     /**
@@ -65,9 +68,10 @@ class MapController extends BaseController
      *
      * @param int $currentPage
      */
-    public function listAction($currentPage = 1)
+    public function listAction($currentPage = 1): ResponseInterface
     {
         $this->createView($currentPage);
+        return $this->htmlResponse();
     }
 
     /**
@@ -79,7 +83,7 @@ class MapController extends BaseController
         // Get current cObj
         $cObj = $this->configurationManager->getContentObject();
 
-        /** @var \Nordkirche\Ndk\Domain\Query\EventQuery $query */
+        /** @var EventQuery $query */
         $query = $this->getEventQuery($currentPage);
 
         list($limit, $mapItems) = $this->getMapItems($query, $this->settings, false);
@@ -89,7 +93,7 @@ class MapController extends BaseController
 
             $cObj = $this->configurationManager->getContentObject();
 
-            if (!$this->settings['flexform']['stream']) {
+            if (empty($this->settings['flexform']['stream'])) {
                 // In einem Rutsch nachladen
                 $this->uriBuilder->reset()
                     ->setTargetPageUid($GLOBALS['TSFE']->id)
@@ -116,7 +120,7 @@ class MapController extends BaseController
                                      'query'    => $query,
                                      'content'  => $cObj->data]);
 
-        if ($this->settings['flexform']['showFilter'] == 1) {
+        if (!empty($this->settings['flexform']['showFilter']) &&  ($this->settings['flexform']['showFilter'] == 1)) {
             $this->view->assign('facets', $this->getFacets());
         }
     }
@@ -133,7 +137,7 @@ class MapController extends BaseController
      * @param int $forceReload
      * @return string
      */
-    public function dataAction($forceReload = 0)
+    public function dataAction($forceReload = 0): ResponseInterface
     {
 
         $this->view->setVariablesToRender(['json']);
@@ -141,7 +145,7 @@ class MapController extends BaseController
         // Get current cObj
         $cObj = $this->configurationManager->getContentObject();
 
-        $cacheInstance = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class)->getCache('tx_nkgooglemaps');
+        $cacheInstance = GeneralUtility::makeInstance(CacheManager::class)->getCache('tx_nkgooglemaps');
 
         $mapMarkerJson = $cacheInstance->get($this->getCacheKey($cObj));
 
@@ -159,7 +163,7 @@ class MapController extends BaseController
 
         if (!trim($mapMarkerJson) || $forceReload) {
 
-            /** @var \Nordkirche\Ndk\Domain\Query\EventQuery $query */
+            /** @var EventQuery $query */
             $query = $this->getEventQuery();
 
             list($limit, $mapItems) = $this->getMapItems($query, $this->settings, true);
@@ -170,6 +174,7 @@ class MapController extends BaseController
         }
 
         $this->view->assignMultiple(['json' =>  json_decode($mapMarkerJson, TRUE)]);
+        return $this->htmlResponse();
     }
 
     /**
@@ -181,7 +186,7 @@ class MapController extends BaseController
         $cObj = new \StdClass();
         $cObj->data = $content;
 
-        $cacheInstance = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class)->getCache('tx_nkgooglemaps');
+        $cacheInstance = GeneralUtility::makeInstance(CacheManager::class)->getCache('tx_nkgooglemaps');
 
         $mapMarkerJson = $cacheInstance->get($this->getCacheKey($cObj));
 
@@ -206,7 +211,7 @@ class MapController extends BaseController
 
             $this->eventController->setSettings($this->settings);
 
-            /** @var \Nordkirche\Ndk\Domain\Query\EventQuery $query */
+            /** @var EventQuery $query */
             $query = $this->getEventQuery();
             // $query->setInclude(array(Event::RELATION_ADDRESS, Event::RELATION_CHIEF_ORGANIZER));
             $query->setInclude([Event::RELATION_ADDRESS, Event::RELATION_CATEGORY, Event::RELATION_CHIEF_ORGANIZER]);
@@ -231,7 +236,7 @@ class MapController extends BaseController
      * @param int $page
      * @return string
      */
-    public function paginatedDataAction($page = 1)
+    public function paginatedDataAction($page = 1): ResponseInterface
     {
 
         $this->view->setVariablesToRender(['json']);
@@ -242,14 +247,14 @@ class MapController extends BaseController
         // Get current cObj
         $cObj = $this->configurationManager->getContentObject();
 
-        $cacheInstance = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Cache\CacheManager::class)->getCache('tx_nkgooglemaps');
+        $cacheInstance = GeneralUtility::makeInstance(CacheManager::class)->getCache('tx_nkgooglemaps');
 
         $mapMarkerJson = $cacheInstance->get($this->getCacheKey($cObj));
 
         if (trim($mapMarkerJson)) {
             $this->view->assignMultiple(['json' => json_decode($mapMarkerJson, TRUE)]);
         } else {
-            /** @var \Nordkirche\Ndk\Domain\Query\EventQuery $query */
+            /** @var EventQuery $query */
             $query = $this->getEventQuery($page);
 
             list($limit, $mapItems) = $this->getMapItems($query, $this->settings, false);
@@ -258,6 +263,7 @@ class MapController extends BaseController
 
             $this->view->assignMultiple(['json' => ['data' => $mapMarkers]]);
         }
+        return $this->htmlResponse();
     }
 
     /**
@@ -285,16 +291,16 @@ class MapController extends BaseController
         $mapItems = [];
 
         // Selected Events
-        if ($settings['flexform']['eventCollection']) {
+        if (!empty($settings['flexform']['eventCollection'])) {
             $query->setEvents(GeneralUtility::trimExplode(',', $settings['flexform']['eventCollection']));
         }
         // Filter by organizer
-        if ($settings['flexform']['institutionCollection']) {
+        if (!empty($settings['flexform']['institutionCollection'])) {
             $query->setOrganizers(GeneralUtility::trimExplode(',', $settings['flexform']['institutionCollection']));
         }
 
         // Categories
-        if ($settings['flexform']['categories']) {
+        if (!empty($settings['flexform']['categories'])) {
             $categories = GeneralUtility::trimExplode(',', $settings['flexform']['categories']);
             if ($settings['flexform']['selectCategoryOption'] == QueryInterface::OPERATOR_AND) {
                 $query->setCategoriesAnd($categories);
@@ -305,17 +311,17 @@ class MapController extends BaseController
         }
 
         // Cities
-        if ($settings['flexform']['cities']) {
+        if (!empty($settings['flexform']['cities'])) {
             $query->setCities(GeneralUtility::trimExplode(',', $settings['flexform']['cities']));
         }
 
         // zipCodes
-        if ($settings['flexform']['zipCodes']) {
+        if (!empty($settings['flexform']['zipCodes'])) {
             $query->setZipCodes(GeneralUtility::trimExplode(',', $settings['flexform']['zipCodes']));
         }
 
         // dateFrom
-        if ($settings['flexform']['dateFrom']) {
+        if (!empty($settings['flexform']['dateFrom'])) {
             $dateFrom = new \DateTime(date('d.m.Y', $settings['flexform']['dateFrom']));
             $query->setTimeFromStart($dateFrom);
         } else {
@@ -323,13 +329,13 @@ class MapController extends BaseController
         }
 
         // dateTo
-        if ($settings['flexform']['dateTo']) {
+        if (!empty($settings['flexform']['dateTo'])) {
             $dateTo = new \DateTime(date('d.m.Y', $settings['flexform']['dateTo']));
             $query->setTimeToEnd($dateTo);
         }
 
         // num days
-        if ((int)$settings['flexform']['numDays'] > 0) {
+        if (!empty($settings['flexform']['numDays']) && ((int)$settings['flexform']['numDays'] > 0)) {
             $dateTo = new \DateTime(date('d.m.Y', time() + ((int)$settings['flexform']['numDays'] * 86400)));
             $query->setTimeToEnd($dateTo);
         }
@@ -345,11 +351,11 @@ class MapController extends BaseController
 
     /**
      * @param int $currentPage
-     * @return \Nordkirche\Ndk\Domain\Query\EventQuery
+     * @return EventQuery
      */
     public function getEventQuery($currentPage = 1)
     {
-        $query = new \Nordkirche\Ndk\Domain\Query\EventQuery();
+        $query = new EventQuery();
         $this->setPagination($query, $currentPage);
         // $query->setInclude(array(Event::RELATION_ADDRESS, Event::RELATION_CHIEF_ORGANIZER));
         $query->setInclude([Event::RELATION_ADDRESS, Event::RELATION_CATEGORY, Event::RELATION_CHIEF_ORGANIZER]);
@@ -371,7 +377,7 @@ class MapController extends BaseController
             $result = $this->eventRepository->get($query, [Event::RELATION_ADDRESS, Event::RELATION_CHIEF_ORGANIZER]);
         }
 
-        if ($result instanceof \Nordkirche\Ndk\Service\Result && $result->getFacets()) {
+        if ($result instanceof Result && $result->getFacets()) {
             $this->addFacets($result->getFacets());
         }
 
@@ -421,5 +427,10 @@ class MapController extends BaseController
     {
         $key = 'tx_nkcevent_map--dataAction--' . serialize($this->settings['flexform']);
         return $cObj->data['uid'] . '--' . md5($key);
+    }
+
+    public function injectEventController(EventController $eventController): void
+    {
+        $this->eventController = $eventController;
     }
 }

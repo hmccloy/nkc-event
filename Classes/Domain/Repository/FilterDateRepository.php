@@ -2,19 +2,22 @@
 
 namespace Nordkirche\NkcEvent\Domain\Repository;
 
-class FilterDateRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
+use TYPO3\CMS\Extbase\Persistence\Repository;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
+class FilterDateRepository extends Repository
 {
 
     // Order by daze
     protected $defaultOrderings = [
-        'date_from' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING
+        'date_from' => QueryInterface::ORDER_ASCENDING
     ];
 
     /**
      * @param int $storagePid
      * @param bool $startedDates
      * @param int $limit
-     * @return array|\TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+     * @return array|QueryResultInterface
      */
     public function findDatesByStoragePid($storagePid, $startedDates = true, $limit = 5)
     {
@@ -25,22 +28,16 @@ class FilterDateRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         if ((bool)$startedDates) {
             // Find also started dates
             $query->matching(
-                $query->logicalAnd(
-                    $query->equals('pid', $storagePid),
-                    $query->greaterThanOrEqual('dateTo', $today)
-                )
+                $query->logicalAnd([$query->equals('pid', $storagePid), $query->greaterThanOrEqual('dateTo', $today)])
             );
         } else {
             // Find upcoming
             $query->matching(
-                $query->logicalAnd(
-                    $query->equals('pid', $storagePid),
-                    $query->greaterThanOrEqual('dateFrom', $today)
-                )
+                $query->logicalAnd([$query->equals('pid', $storagePid), $query->greaterThanOrEqual('dateFrom', $today)])
             );
         }
 
-        $query->setOrderings(['dateFrom' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING]);
+        $query->setOrderings(['dateFrom' => QueryInterface::ORDER_ASCENDING]);
 
         $query->setLimit($limit);
 
