@@ -1,6 +1,7 @@
 <?php
 namespace  Nordkirche\NkcEvent\ViewHelpers;
 
+use Nordkirche\Ndk\Domain\Model\Address;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 use Nordkirche\Ndk\Domain\Model\Event\Event;
@@ -51,21 +52,24 @@ class JsonViewHelper extends AbstractViewHelper
             $result = [
                 '@context'  => 'https://schema.org',
                 '@type'     => 'Event',
-                  'location' => [
-                        '@type' => 'Place',
-                        'name'  => $event->getLocationName(),
-                        'address' => [
-                            '@type' => 'PostalAddress',
-                            'addressLocality' => $event->getAddress()->getCity(),
-                            'postalCode' => $event->getAddress()->getZipCode(),
-                            'streetAddress' => $event->getAddress()->getStreet()
-                        ]
-                    ],
+                'location' => [
+                    '@type' => 'Place',
+                    'name'  => $event->getLocationName(),
+                ],
                 'name' => $event->getTitle(),
                 'description' => $event->getDescription(),
                 'image' => $image,
                 'startDate' => $event->getStartsAt()->format("Y-m-d\TH:i")
             ];
+
+            if ($event->getAddress() instanceof Address) {
+                $result['location']['address'] = [
+                    '@type' => 'PostalAddress',
+                    'addressLocality' => $event->getAddress()->getCity(),
+                    'postalCode' => $event->getAddress()->getZipCode(),
+                    'streetAddress' => $event->getAddress()->getStreet()
+                ];
+            }
 
             $price = $event->getPrice();
 
