@@ -5,6 +5,9 @@ namespace Nordkirche\NkcEvent\Controller;
 use Nordkirche\NkcBase\Controller\BaseController;
 use Nordkirche\NkcEvent\Domain\Dto\SearchRequest;
 use Nordkirche\NkcEvent\Domain\Repository\FilterDateRepository;
+use Nordkirche\NkcEvent\Event\ModifyAssignedListValuesEvent;
+use Nordkirche\NkcEvent\Event\ModifyAssignedValuesEvent;
+use Nordkirche\NkcEvent\Event\ModifyEventQueryEvent;
 use TYPO3\CMS\Extbase\Domain\Repository\CategoryRepository;
 use Nordkirche\NkcBase\Exception\ApiException;
 use Psr\Http\Message\ResponseInterface;
@@ -116,6 +119,12 @@ class EventController extends BaseController
         // Set pagination parameters
         $this->setPagination($query, $currentPage);
 
+        /** @var ModifyEventQueryEvent $event */
+        $event = $this->eventDispatcher->dispatch(
+            new ModifyEventQueryEvent($this, $query, $this->request)
+        );
+        $query = $event->getEventQuery();
+
         // Get events
         $events = $this->eventRepository->get($query);
 
@@ -169,7 +178,7 @@ class EventController extends BaseController
             }
         }
 
-        $this->view->assignMultiple([
+        $assignedListValues = [
             'query' => $query,
             'events' => $events,
             'content' => $cObj->data,
@@ -180,7 +189,17 @@ class EventController extends BaseController
             'requestUri' => $requestUri,
             'organizer' => $organizer,
             'pagination' => $this->getPagination($events, $currentPage)
-        ]);
+        ];
+
+        /** @var ModifyAssignedListValuesEvent $event */
+        $event = $this->eventDispatcher->dispatch(
+            new ModifyAssignedListValuesEvent($this, $assignedListValues, $this->request)
+        );
+
+        $assignedListValues = $event->getAssignedListValues();
+
+        $this->view->assignMultiple($assignedListValues);
+
         return $this->htmlResponse();
     }
 
@@ -277,7 +296,7 @@ class EventController extends BaseController
 
     /**
      * @param EventQuery $query
-     * @param \Nordkirche\NkcEvent\Domain\Dto\ $searchRequest
+     * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
      */
     private function setUserFilters($query, $searchRequest)
     {
@@ -643,6 +662,9 @@ class EventController extends BaseController
         return $institutions;
     }
 
+    /**
+     * @return ResponseInterface
+     */
     public function searchFormAction(): ResponseInterface
     {
         $this->view->assignMultiple([
@@ -956,11 +978,21 @@ class EventController extends BaseController
         // Get current cObj
         $cObj = $this->configurationManager->getContentObject();
 
-        $this->view->assignMultiple([
+        $assignedValues = [
             'event' => $event,
             'mapMarker' => $mapMarker,
             'content' => $cObj->data
-        ]);
+        ];
+
+        /** @var ModifyAssignedValuesEvent $event */
+        $event = $this->eventDispatcher->dispatch(
+            new ModifyAssignedValuesEvent($this, $assignedValues, $this->request)
+        );
+
+        $assignedValues = $event->getAssignedValues();
+
+        $this->view->assignMultiple($assignedValues);
+
         return $this->htmlResponse();
     }
 

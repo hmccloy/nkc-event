@@ -14,8 +14,8 @@ Die Extension stellt PlugIns bereit, um Inhalte der Nordkirche API (Veranstaltun
 ## Abhängigkeiten
 Diese Extension basiert auf
 
-    nordkirche/NDK ^2.0
     nordkirche/nkc_base ^11.5
+    nordkirche/nk-google-map ^11.5
     fluidtypo3/vhs ^6.1
     TYPO3 ^11.5
 
@@ -36,6 +36,15 @@ Grunsätzlich ist es so, dass Konfigurationen teilweise sowohl in TypoScript als
 
 Die Templates der Extension haben ein sehr rudimentäres Markup, um die Möglichkeiten der Extension zu zeigen. Die darzustellenen Inhalte sind so komplex, dass ein Standard-Layout wenig Sinn ergeben hätte.
 
+## PSR-14 Events
+Es gibt PSR-14 Events, um die NAPI Queries und die Ausgabe der Daten anzupassen:
+
+| Controller      | Action      | Event                         | Daten holen             | Daten überschreiben     |
+|-----------------|-------------|-------------------------------|-------------------------|-------------------------|
+| EventController | listAction  | ModifyAssignedListValuesEvent | getAssignedListValues() | setAssignedListValues() |
+| EventController | listAction  | ModifyQueryEvent              | getEventQuery()         | setEventQuery()         |
+| EventController | showAction  | ModifyAssignedValuesEvent     | getAssignedValues()     | setAssignedValues()     |
+|
 
 ## Fehler gefunden?
 Bitte melden Sie Fehler via github
