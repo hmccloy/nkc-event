@@ -12,7 +12,7 @@ final class ModifyEventQueryEvent
     public function __construct(
         private readonly EventController $controller,
         private EventQuery $eventQuery,
-        private readonly Request $request,
+        private readonly Request $request
     ) {
     }
 
