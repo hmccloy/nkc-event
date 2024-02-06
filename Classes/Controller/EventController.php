@@ -298,7 +298,7 @@ class EventController extends BaseController
      * @param EventQuery $query
      * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
      */
-    private function setUserFilters($query, $searchRequest)
+    protected function setUserFilters($query, $searchRequest)
     {
         if (($searchRequest->getSearch() != '') && (strlen($searchRequest->getSearch()) > 2)) {
             $query->setQuery($searchRequest->getSearch());
