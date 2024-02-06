@@ -121,7 +121,7 @@ class EventController extends BaseController
 
         /** @var ModifyEventQueryEvent $event */
         $event = $this->eventDispatcher->dispatch(
-            new ModifyEventQueryEvent($this, $query, $this->request)
+            new ModifyEventQueryEvent($this, $query, $this->request, $this->settings)
         );
         $query = $event->getEventQuery();
 
