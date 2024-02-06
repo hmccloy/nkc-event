@@ -362,7 +362,7 @@ class EventController extends BaseController
      * @param $id
      * @return bool|ModelInterface
      */
-    private function getOrganizer($id)
+    protected function getOrganizer($id)
     {
         try {
             $organizer = $this->institutionRepository->getById($id);
