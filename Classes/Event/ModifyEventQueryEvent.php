@@ -13,6 +13,7 @@ final class ModifyEventQueryEvent
         private readonly EventController $controller,
         private EventQuery $eventQuery,
         private readonly Request $request,
+        private readonly array $settings
     ) {
     }
 
@@ -34,5 +35,10 @@ final class ModifyEventQueryEvent
     public function getRequest(): Request
     {
         return $this->request;
+    }
+
+    public function getSettings(): array
+    {
+        return $this->settings;
     }
 }

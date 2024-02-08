@@ -11,7 +11,7 @@ final class ModifyAssignedValuesEvent
     public function __construct(
         private readonly EventController $controller,
         private array $assignedValues,
-        private readonly Request $request,
+        private readonly Request $request
     ) {
     }
 

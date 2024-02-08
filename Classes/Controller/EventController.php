@@ -121,7 +121,7 @@ class EventController extends BaseController
 
         /** @var ModifyEventQueryEvent $event */
         $event = $this->eventDispatcher->dispatch(
-            new ModifyEventQueryEvent($this, $query, $this->request)
+            new ModifyEventQueryEvent($this, $query, $this->request, $this->settings)
         );
         $query = $event->getEventQuery();
 
@@ -298,7 +298,7 @@ class EventController extends BaseController
      * @param EventQuery $query
      * @param \Nordkirche\NkcEvent\Domain\Dto\SearchRequest $searchRequest
      */
-    private function setUserFilters($query, $searchRequest)
+    protected function setUserFilters($query, $searchRequest)
     {
         if (($searchRequest->getSearch() != '') && (strlen($searchRequest->getSearch()) > 2)) {
             $query->setQuery($searchRequest->getSearch());
@@ -362,7 +362,7 @@ class EventController extends BaseController
      * @param $id
      * @return bool|ModelInterface
      */
-    private function getOrganizer($id)
+    protected function getOrganizer($id)
     {
         try {
             $organizer = $this->institutionRepository->getById($id);
